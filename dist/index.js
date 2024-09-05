@@ -1,12 +1,17 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-let a = 10;
-let b = 6;
-let total;
-if (a < b) {
-    total = a + b;
-}
-else {
-    total = a + b + 50;
-}
-console.log(total);
+const express_1 = __importDefault(require("express"));
+const cors_1 = __importDefault(require("cors"));
+const instrutor_router_1 = __importDefault(require("./routes/instrutor.router"));
+const app = (0, express_1.default)();
+app.use(express_1.default.json());
+app.use((0, cors_1.default)({
+    origin: "*",
+}));
+app.use("/api/instrutor", instrutor_router_1.default);
+app.listen(3000, () => {
+    console.log("server running on port 3000");
+});
