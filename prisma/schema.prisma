@@ -1,0 +1,134 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Aluno {
+  id_aluno         Int       @id @default(autoincrement())
+  nm_aluno         String    @db.VarChar(100)
+  celular_aluno    String    @db.VarChar(13)
+  email_aluno      String?   @unique @db.VarChar(50)
+  senha_aluno      String    @db.VarChar(30)
+  nascimento_aluno DateTime
+  servicos         Servico[]
+
+  @@map("tb_aluno")
+}
+
+model Especializacao {
+  id_especializacao Int                       @id @default(autoincrement())
+  nm_especializacao String                    @db.VarChar(100)
+  instrutores       InstrutorEspecializacao[]
+
+  @@map("tb_especializacao")
+}
+
+model Qualificacao {
+  id_qualificacao Int                     @id @default(autoincrement())
+  nm_qualificacao String                  @db.VarChar(100)
+  instrutores     InstrutorQualificacao[]
+
+  @@map("tb_qualificacao")
+}
+
+model Endereco {
+  id_endereco Int                 @id @default(autoincrement())
+  rua         String?             @db.VarChar(80)
+  complemento String?             @db.VarChar(80)
+  bairro      String?             @db.VarChar(80)
+  cidade      String?             @db.VarChar(80)
+  estado      String?             @db.VarChar(80)
+  instrutores InstrutorEndereco[]
+
+  @@map("tb_endereco")
+}
+
+model Instrutor {
+  id_instrutor        Int                       @id @default(autoincrement())
+  nm_instrutor        String                    @db.VarChar(100)
+  email_instrutor     String                    @unique @db.VarChar(50)
+  senha_instrutor     String                    @db.VarChar(30)
+  cel_instrutor       String                    @db.VarChar(13)
+  cref_instrutor      String?                   @db.VarChar(11)
+  avaliacao_instrutor Decimal?                  @db.Decimal(4, 2)
+  intro_instrutor     String?                   @db.TinyText
+  especializacoes     InstrutorEspecializacao[]
+  qualificacoes       InstrutorQualificacao[]
+  enderecos           InstrutorEndereco[]
+  links               Link[]
+  servicos            Servico[]
+
+  @@map("tb_instrutor")
+}
+
+model InstrutorEspecializacao {
+  id_instrutor      Int
+  id_especializacao Int
+  instrutor         Instrutor      @relation(fields: [id_instrutor], references: [id_instrutor])
+  especializacao    Especializacao @relation(fields: [id_especializacao], references: [id_especializacao])
+
+  @@id([id_instrutor, id_especializacao])
+  @@map("tb_instrutorEspecializacao")
+}
+
+model InstrutorQualificacao {
+  id_instrutor    Int
+  id_qualificacao Int
+  instrutor       Instrutor    @relation(fields: [id_instrutor], references: [id_instrutor])
+  qualificacao    Qualificacao @relation(fields: [id_qualificacao], references: [id_qualificacao])
+
+  @@id([id_instrutor, id_qualificacao])
+  @@map("tb_instrutorQualificacao")
+}
+
+model InstrutorEndereco {
+  id_instrutor Int
+  id_endereco  Int
+  instrutor    Instrutor @relation(fields: [id_instrutor], references: [id_instrutor])
+  endereco     Endereco  @relation(fields: [id_endereco], references: [id_endereco])
+
+  @@id([id_instrutor, id_endereco])
+  @@map("tb_instrutorEndereco")
+}
+
+model Link {
+  id_link      Int       @id @default(autoincrement())
+  nm_link      String    @db.VarChar(100)
+  id_instrutor Int
+  instrutor    Instrutor @relation(fields: [id_instrutor], references: [id_instrutor])
+
+  @@map("tb_link")
+}
+
+model Servico {
+  id_servico   Int         @id @default(autoincrement())
+  ds_servico   String?     @db.VarChar(100)
+  id_aluno     Int
+  id_instrutor Int
+  aluno        Aluno       @relation(fields: [id_aluno], references: [id_aluno])
+  instrutor    Instrutor   @relation(fields: [id_instrutor], references: [id_instrutor])
+  avaliacoes   Avaliacao[]
+
+  @@map("tb_servico")
+}
+
+model Avaliacao {
+  id_avaliacao Int      @id @default(autoincrement())
+  nota         Decimal? @db.Decimal(4, 2)
+  comentario   String?  @db.TinyText
+  dt_avaliacao DateTime
+  id_servico   Int
+  servico      Servico  @relation(fields: [id_servico], references: [id_servico])
+
+  @@map("tb_avaliacao")
+}
