@@ -1,14 +1,6 @@
 import { Instrutor } from "@prisma/client";
 import { prisma } from "../utils/prisma.util";
 
-type PostBody = {
-  nm_instrutor: string;
-  email_instrutor: string;
-  senha_instrutor: string;
-  cel_instrutor: string;
-  cref_instrutor: string;
-};
-
 // mover isso para outra pasta
 // pesquisar sobre [Symbol.iterator]() para não utilizar type any
 const organize = (body: any) => {
@@ -39,6 +31,7 @@ const organize = (body: any) => {
   }
   return newJson;
 };
+//
 
 export const findInstrutor = async () => {
   const instrutor = await prisma.instrutorEspecializacao.findMany({
@@ -72,7 +65,7 @@ export const findInstrutorById = async (id: number) => {
   return instrutor;
 };
 
-export const createInstrutorById = async (body: PostBody) => {
+export const createInstrutor = async (body: Instrutor) => {
   const createInstrutorById = await prisma.instrutor.create({
     data: body,
   });

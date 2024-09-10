@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import {
   findInstrutor,
   findInstrutorById,
-  createInstrutorById,
+  createInstrutor,
 } from "../models/instrutor.model";
 
 export const getInstrutor = async (request: Request, response: Response) => {
@@ -19,6 +19,6 @@ export const getInstrutorById = async (
 };
 
 export const postInstrutor = async (request: Request, response: Response) => {
-  const postInstrutor = await createInstrutorById(request.body);
+  const postInstrutor = await createInstrutor(request.body);
   return response.json(postInstrutor);
 };
