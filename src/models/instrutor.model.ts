@@ -33,7 +33,7 @@ const organize = (body: any) => {
 };
 //
 
-export const findInstrutor = async () => {
+export async function findInstrutor() {
   const instrutor = await prisma.instrutorEspecializacao.findMany({
     include: {
       instrutor: {
@@ -54,20 +54,20 @@ export const findInstrutor = async () => {
     },
   });
   return organize(instrutor);
-};
+}
 
-export const findInstrutorById = async (id: number) => {
+export async function findInstrutorById(id: number) {
   const instrutor = await prisma.instrutor.findUnique({
     where: {
       id_instrutor: id,
     },
   });
   return instrutor;
-};
+}
 
-export const createInstrutor = async (body: Instrutor) => {
+export async function createInstrutor(body: Instrutor) {
   const createInstrutorById = await prisma.instrutor.create({
     data: body,
   });
   return createInstrutorById;
-};
+}

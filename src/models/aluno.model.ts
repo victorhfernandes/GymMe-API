@@ -9,9 +9,9 @@ type PostBody = {
   cref_instrutor: string;
 };
 
-export const createAluno = async (body: Aluno) => {
+export async function createAluno(body: Aluno) {
   const createAlunoById = await prisma.aluno.create({
     data: body,
   });
   return createAlunoById;
-};
+}
