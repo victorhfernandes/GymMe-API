@@ -2,6 +2,8 @@ import { PrismaClient } from "@prisma/client";
 
 export const prisma = new PrismaClient();
 
+checkDatabaseConnection();
+
 async function checkDatabaseConnection() {
   try {
     await prisma.$connect();
@@ -12,5 +14,3 @@ async function checkDatabaseConnection() {
     await prisma.$disconnect(); // Ensure disconnection after testing
   }
 }
-
-checkDatabaseConnection();
