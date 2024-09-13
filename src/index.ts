@@ -1,8 +1,10 @@
 import express from "express";
 import cors from "cors";
 import routes from "./routes/index.router";
+import globalErrorHandler from "./controllers/error.controller";
 
 const app = express();
+const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 
@@ -13,7 +15,8 @@ app.use(
 );
 
 app.use("/api", routes);
+app.use(globalErrorHandler);
 
-app.listen(3000, () => {
-  console.log("server running on port 3000");
+app.listen(PORT, () => {
+  console.log(`Servidor rodando na porta ${PORT}`);
 });
