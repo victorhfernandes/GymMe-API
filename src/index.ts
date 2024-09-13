@@ -1,7 +1,6 @@
 import express from "express";
 import cors from "cors";
-import instrutorRouter from "./routes/instrutor.router";
-import alunoRouter from "./routes/aluno.router";
+import routes from "./routes/index.router";
 
 const app = express();
 
@@ -13,8 +12,7 @@ app.use(
   })
 );
 
-app.use("/api/instrutor", instrutorRouter);
-app.use("/api/aluno", alunoRouter);
+app.use("/api", routes);
 
 app.listen(3000, () => {
   console.log("server running on port 3000");
