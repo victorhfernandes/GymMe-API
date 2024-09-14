@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Request, Response } from "express-serve-static-core";
 import {
   findInstrutor,
   findInstrutorById,
@@ -16,5 +16,5 @@ export async function getInstrutorById(request: Request, response: Response) {
 }
 export async function postInstrutor(request: Request, response: Response) {
   const postInstrutor = await createInstrutor(request.body);
-  return response.json(postInstrutor);
+  return response.status(201).json(postInstrutor);
 }

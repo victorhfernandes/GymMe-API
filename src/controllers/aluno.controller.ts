@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Request, Response } from "express-serve-static-core";
 import { createAluno } from "../models/aluno.model";
 
 export async function postAluno(request: Request, response: Response) {
