@@ -17,7 +17,7 @@ model Aluno {
   id_aluno         Int       @id @default(autoincrement())
   nm_aluno         String    @db.VarChar(100)
   celular_aluno    String    @db.VarChar(13)
-  email_aluno      String?   @unique @db.VarChar(50)
+  email_aluno      String    @unique @db.VarChar(50)
   senha_aluno      String    @db.VarChar(30)
   nascimento_aluno DateTime
   servicos         Servico[]

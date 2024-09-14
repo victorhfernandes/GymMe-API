@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express-serve-static-core";
+//import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import CustomError from "./CustomError";
 
 export default function errorHandler(
@@ -8,27 +9,21 @@ export default function errorHandler(
   next: NextFunction
 ) {
   error.statusCode = error.statusCode || 500;
-
-  if (process.env.NODE_ENV === "development") {
-    devErrors(response, error);
-  } else if (process.env.NODE_ENV === "production") {
-    /*if(error.name === 'CastError') error = castErrorHandler(error);
-    if(error.code === 11000) error = duplicateKeyErrorHandler(error);
-    if(error.name === 'ValidationError') error = validationErrorHandler(error);*/
-    prodErrors(response, error);
-  }
+  logError(error);
+  resError(response, error);
 }
 
-function devErrors(response: Response, error: CustomError) {
-  response.status(error.statusCode).json({
+function logError(error: CustomError) {
+  const objError = {
     status: error.statusCode,
     message: error.message,
     stackTrace: error.stack,
     error: error,
-  });
+  };
+  console.error(objError);
 }
 
-function prodErrors(response: Response, error: CustomError) {
+function resError(response: Response, error: CustomError) {
   if (error.isOperational) {
     response.status(error.statusCode).json({
       status: error.statusCode,

@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import routes from "./routes/index.router";
-import invalidRouteHandler from "./utils/InvalidRouteHandler";
+import invalidRouteHandler from "./utils/invalidRouteHandler";
 import globalErrorHandler from "./utils/globalErrorHandler";
 
 dotenv.config({ path: "./.env" });
