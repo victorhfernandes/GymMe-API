@@ -11,11 +11,13 @@ type AsyncFunc = (
 export default function asyncHandler(func: AsyncFunc) {
   return function (request: Request, response: Response, next: NextFunction) {
     func(request, response, next).catch(function (
-      err: PrismaClientKnownRequestError
+      prismaError: PrismaClientKnownRequestError
     ) {
       let error: CustomError;
-      if (err.code === "P2002") error = duplicateErrorHandler(err);
-      else error = new CustomError(err.code, 400);
+      if (prismaError.code === "P2002")
+        error = duplicateErrorHandler(prismaError);
+      else error = new CustomError(prismaError.message, 400);
+      console.log(prismaError);
       next(error);
     });
   };
@@ -24,8 +26,10 @@ export default function asyncHandler(func: AsyncFunc) {
 function duplicateErrorHandler(error: PrismaClientKnownRequestError) {
   let msg: string;
   if (error.meta) {
-    const attr = String(error.meta.target).split("_");
-    msg = `${attr[0]} já cadastrado!`;
+    const attr = String(error.meta.target).includes("email")
+      ? "email"
+      : String(error.meta.target);
+    msg = `${attr} já cadastrado!`;
   } else {
     msg = "Bad Request";
   }

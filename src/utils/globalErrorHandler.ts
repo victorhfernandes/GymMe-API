@@ -1,5 +1,4 @@
 import { Request, Response, NextFunction } from "express-serve-static-core";
-//import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import CustomError from "./CustomError";
 
 export default function errorHandler(
@@ -9,7 +8,7 @@ export default function errorHandler(
   next: NextFunction
 ) {
   error.statusCode = error.statusCode || 500;
-  logError(error);
+  if (process.env.DEV_ENV) logError(error);
   resError(response, error);
 }
 
@@ -31,7 +30,7 @@ function resError(response: Response, error: CustomError) {
     });
   } else {
     response.status(500).json({
-      status: "error",
+      status: 500,
       message: "Something went wrong! Please try again later.",
     });
   }
