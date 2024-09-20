@@ -13,13 +13,16 @@ export default function asyncHandler(func: AsyncFunc) {
     func(request, response, next).catch(function (
       prismaError: PrismaClientKnownRequestError
     ) {
-      let error: CustomError;
-      if (prismaError.code === "P2002")
-        error = duplicateErrorHandler(prismaError);
-      if (prismaError.code === "P2010")
-        error = new CustomError("Insira somente uma especialização!", 400);
-      else error = new CustomError(prismaError.message, 400);
-      console.log(prismaError);
+      let error = new CustomError(prismaError.message, 400);
+
+      if (prismaError.code) {
+        if (prismaError.code === "P2002") {
+          error = duplicateErrorHandler(prismaError);
+        }
+        if (prismaError.code === "P2010") {
+          error = new CustomError("Insira somente uma especialização!", 400);
+        }
+      }
       next(error);
     });
   };
