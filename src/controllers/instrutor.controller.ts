@@ -1,9 +1,9 @@
 import { Request, Response } from "express-serve-static-core";
 import {
   createInstrutor,
+  findInstrutores,
   findLoginInstrutor,
   findEspecializacoes,
-  findInstrutores,
   findInstrutoresByEspecializacao,
   findInstrutorByEmail,
 } from "../models/instrutor.model";
@@ -15,16 +15,6 @@ type queryEspecializacao = {
 export async function postInstrutor(request: Request, response: Response) {
   const resultado = await createInstrutor(request.body);
   return response.status(201).json(resultado);
-}
-
-export async function getLoginInstrutor(request: Request, response: Response) {
-  const resultado = await findLoginInstrutor(request.body);
-  return response.json(resultado);
-}
-
-export async function getEspecializacoes(request: Request, response: Response) {
-  const resultado = await findEspecializacoes();
-  return response.json(resultado);
 }
 
 /*Faz pesquisa de instrutores por Id de Especialização caso seja definido na url (?esp=),
@@ -39,6 +29,16 @@ export async function getInstrutores(
 
   console.log(request.query.esp);
 
+  return response.json(resultado);
+}
+
+export async function getLoginInstrutor(request: Request, response: Response) {
+  const resultado = await findLoginInstrutor(request.body);
+  return response.json(resultado);
+}
+
+export async function getEspecializacoes(request: Request, response: Response) {
+  const resultado = await findEspecializacoes();
   return response.json(resultado);
 }
 

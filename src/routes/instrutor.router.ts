@@ -1,9 +1,9 @@
 import { Router } from "express";
 import {
   postInstrutor,
+  getInstrutores,
   getLoginInstrutor,
   getEspecializacoes,
-  getInstrutores,
   getInstrutorByEmail,
 } from "../controllers/instrutor.controller";
 import asyncHandler from "../middlewares/asyncErrorHandler";
@@ -12,8 +12,8 @@ const router = Router();
 
 router
   .post("/", asyncHandler(postInstrutor))
-  .get("/login", asyncHandler(getLoginInstrutor))
   .get("/", asyncHandler(getInstrutores))
+  .get("/login", asyncHandler(getLoginInstrutor))
   .get("/especializacao", asyncHandler(getEspecializacoes))
   .get("/:email", asyncHandler(getInstrutorByEmail));
 

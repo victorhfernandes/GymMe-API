@@ -10,25 +10,6 @@ export async function createInstrutor(body: Instrutor) {
 }
 
 //Read
-export async function findLoginInstrutor(body: Instrutor) {
-  const { email_instrutor, senha_instrutor } = body;
-  const resultado = await prisma.instrutor.findUnique({
-    where: {
-      email_instrutor: email_instrutor,
-      senha_instrutor: senha_instrutor,
-    },
-    select: {
-      id_instrutor: true,
-    },
-  });
-  return resultado;
-}
-
-export async function findEspecializacoes() {
-  const resultado = await prisma.especializacao.findMany();
-  return resultado;
-}
-
 export async function findInstrutores() {
   const resultado = await prisma.$queryRaw`SELECT i.nm_instrutor AS nome, 
   GROUP_CONCAT(e.nm_especializacao ORDER BY e.nm_especializacao SEPARATOR '; ') AS especializacoes
@@ -52,6 +33,25 @@ export async function findInstrutoresByEspecializacao(especializacao: number) {
   GROUP BY i.id_instrutor
   ORDER BY i.id_instrutor;`;
 
+  return resultado;
+}
+
+export async function findLoginInstrutor(body: Instrutor) {
+  const { email_instrutor, senha_instrutor } = body;
+  const resultado = await prisma.instrutor.findUnique({
+    where: {
+      email_instrutor: email_instrutor,
+      senha_instrutor: senha_instrutor,
+    },
+    select: {
+      id_instrutor: true,
+    },
+  });
+  return resultado;
+}
+
+export async function findEspecializacoes() {
+  const resultado = await prisma.especializacao.findMany();
   return resultado;
 }
 
