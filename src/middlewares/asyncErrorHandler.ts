@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express-serve-static-core";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
-import CustomError from "./CustomError";
+import CustomError from "../utils/CustomError";
 
 type AsyncFunc = (
   request: Request,

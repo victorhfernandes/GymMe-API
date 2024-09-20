@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express-serve-static-core";
-import CustomError from "./CustomError";
+import CustomError from "../utils/CustomError";
 import { Router } from "express";
 
 const router = Router();

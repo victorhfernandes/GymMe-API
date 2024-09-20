@@ -4,7 +4,7 @@ import {
   getInstrutorById,
   postInstrutor,
 } from "../controllers/instrutor.controller";
-import asyncHandler from "../utils/asyncErrorHandler";
+import asyncHandler from "../middlewares/asyncErrorHandler";
 
 const router = Router();
 

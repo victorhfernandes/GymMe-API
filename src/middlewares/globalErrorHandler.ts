@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express-serve-static-core";
-import CustomError from "./CustomError";
+import CustomError from "../utils/CustomError";
 
 export default function errorHandler(
   error: CustomError,
