@@ -1,73 +1,68 @@
 import { Instrutor } from "@prisma/client";
 import { prisma } from "../utils/prisma.util";
 
-// mover isso para outra pasta
-// pesquisar sobre [Symbol.iterator]() para não utilizar type any
-const organize = (body: any) => {
-  const newJson = [];
-  let idInstrutor = 0;
-  let count = 0;
-
-  for (let item of body) {
-    const objInstrutor = {
-      id_instrutor: item.id_instrutor,
-      nm_instrutor: item.instrutor.nm_instrutor,
-      especializacao: [
-        {
-          id: item.id_especializacao,
-          name: item.especializacao.nm_especializacao,
-        },
-      ],
-    };
-
-    if (item.id_instrutor === idInstrutor) {
-      newJson[count - 1].especializacao.push(objInstrutor.especializacao[0]);
-    } else {
-      newJson.push(objInstrutor);
-      count++;
-    }
-
-    idInstrutor = item.id_instrutor;
-  }
-  return newJson;
-};
-//
-
-export async function findInstrutor() {
-  const instrutor = await prisma.instrutorEspecializacao.findMany({
-    include: {
-      instrutor: {
-        select: {
-          nm_instrutor: true,
-        },
-      },
-      especializacao: {
-        select: {
-          nm_especializacao: true,
-        },
-      },
-    },
-    orderBy: {
-      instrutor: {
-        nm_instrutor: "asc",
-      },
-    },
-  });
-  return organize(instrutor);
-}
-
-export async function findInstrutorById(id: number) {
-  const instrutor = await prisma.instrutor.findUnique({
-    where: {
-      id_instrutor: id,
-    },
-  });
-  return instrutor;
-}
-
+//Create
 export async function createInstrutor(body: Instrutor) {
   const createInstrutorById = await prisma.instrutor.create({
     data: body,
   });
   return createInstrutorById;
+}
+
+//Read
+export async function findLoginInstrutor(body: Instrutor) {
+  const { email_instrutor, senha_instrutor } = body;
+  const resultado = await prisma.instrutor.findUnique({
+    where: {
+      email_instrutor: email_instrutor,
+      senha_instrutor: senha_instrutor,
+    },
+    select: {
+      id_instrutor: true,
+    },
+  });
+  return resultado;
+}
+
+export async function findEspecializacoes() {
+  const resultado = await prisma.especializacao.findMany();
+  return resultado;
+}
+
+export async function findInstrutores() {
+  const resultado = await prisma.$queryRaw`SELECT i.nm_instrutor AS nome, 
+  GROUP_CONCAT(e.nm_especializacao ORDER BY e.nm_especializacao SEPARATOR '; ') AS especializacoes
+  FROM tb_instrutorEspecializacao ie
+  JOIN tb_instrutor i ON ie.id_instrutor = i.id_instrutor
+  JOIN tb_especializacao e ON ie.id_especializacao = e.id_especializacao
+  GROUP BY i.id_instrutor
+  ORDER BY i.id_instrutor;`;
+
+  return resultado;
+}
+
+//Implementar OR no WHERE
+export async function findInstrutoresByEspecializacao(especializacao: number) {
+  const resultado = await prisma.$queryRaw`SELECT i.nm_instrutor AS nome, 
+  GROUP_CONCAT(e.nm_especializacao ORDER BY e.nm_especializacao SEPARATOR '; ') AS especializacoes
+  FROM tb_instrutorEspecializacao ie
+  JOIN tb_instrutor i ON ie.id_instrutor = i.id_instrutor
+  JOIN tb_especializacao e ON ie.id_especializacao = e.id_especializacao
+  WHERE e.id_especializacao = ${especializacao} 
+  GROUP BY i.id_instrutor
+  ORDER BY i.id_instrutor;`;
+
+  return resultado;
+}
+
+export async function findInstrutorByEmail(email: string) {
+  const resultado = await prisma.instrutor.findUnique({
+    where: {
+      email_instrutor: email,
+    },
+    select: {
+      id_instrutor: true,
+    },
+  });
+  return resultado;
 }
