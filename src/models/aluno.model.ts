@@ -19,3 +19,17 @@ export async function findAlunoByEmail(email: string) {
   });
   return resultado;
 }
+
+export async function findLoginAluno(body: Aluno) {
+  const { email_aluno, senha_aluno } = body;
+  const resultado = await prisma.aluno.findUnique({
+    where: {
+      email_aluno: email_aluno,
+      senha_aluno: senha_aluno,
+    },
+    select: {
+      id_aluno: true,
+    },
+  });
+  return resultado;
+}
