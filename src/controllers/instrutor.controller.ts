@@ -46,6 +46,6 @@ export async function getInstrutorByEmail(
   request: Request,
   response: Response
 ) {
-  const resultado = await findInstrutorByEmail(request.params.email);
+  const resultado = await findInstrutorByEmail(request.body);
   return response.json(!!resultado); //retorna resultado convertido em boolean
 }

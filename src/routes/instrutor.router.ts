@@ -12,9 +12,9 @@ const router = Router();
 
 router
   .post("/", asyncHandler(postInstrutor))
-  .get("/", asyncHandler(getInstrutores))
+  .get("/", asyncHandler(getInstrutores))//(?esp=)
   .get("/login", asyncHandler(getLoginInstrutor))
   .get("/especializacao", asyncHandler(getEspecializacoes))
-  .get("/:email", asyncHandler(getInstrutorByEmail));
+  .get("/email", asyncHandler(getInstrutorByEmail));
 
 export default router;

@@ -55,10 +55,11 @@ export async function findEspecializacoes() {
   return resultado;
 }
 
-export async function findInstrutorByEmail(email: string) {
+export async function findInstrutorByEmail(body: Instrutor) {
+  const { email_instrutor } = body;
   const resultado = await prisma.instrutor.findUnique({
     where: {
-      email_instrutor: email,
+      email_instrutor: email_instrutor,
     },
     select: {
       id_instrutor: true,

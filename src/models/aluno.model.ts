@@ -8,10 +8,11 @@ export async function createAluno(body: Aluno) {
   return resultado;
 }
 
-export async function findAlunoByEmail(email: string) {
+export async function findAlunoByEmail(body: Aluno) {
+  const { email_aluno } = body;
   const resultado = await prisma.aluno.findUnique({
     where: {
-      email_aluno: email,
+      email_aluno: email_aluno,
     },
     select: {
       id_aluno: true,

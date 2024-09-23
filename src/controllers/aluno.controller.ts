@@ -7,7 +7,7 @@ export async function postAluno(request: Request, response: Response) {
 }
 
 export async function getAlunoByEmail(request: Request, response: Response) {
-  const resultado = await findAlunoByEmail(request.params.email);
+  const resultado = await findAlunoByEmail(request.body);
   return response.json(!!resultado); //retorna resultado convertido em boolean
 }
 
