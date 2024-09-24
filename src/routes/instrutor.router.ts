@@ -12,7 +12,7 @@ const router = Router();
 
 router
   .post("/", asyncHandler(postInstrutor))
-  .get("/", asyncHandler(getInstrutores))//(?esp=)
+  .get("/:esp", asyncHandler(getInstrutores))
   .get("/login", asyncHandler(getLoginInstrutor))
   .get("/especializacao", asyncHandler(getEspecializacoes))
   .get("/email", asyncHandler(getInstrutorByEmail));
