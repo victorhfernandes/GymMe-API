@@ -23,11 +23,9 @@ export async function getInstrutores(
   request: Request<{}, {}, {}, queryEspecializacao>,
   response: Response
 ) {
-  const resultado = request.params.esp
-    ? await findInstrutoresByEspecializacao(request.params.esp)
+  const resultado = request.query.esp
+    ? await findInstrutoresByEspecializacao(request.query.esp)
     : await findInstrutores();
-
-  console.log(request.query.esp);
 
   return response.json(resultado);
 }
