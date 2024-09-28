@@ -16,9 +16,9 @@ datasource db {
 model Aluno {
   id_aluno         Int       @id @default(autoincrement())
   nm_aluno         String    @db.VarChar(100)
-  celular_aluno    String?   @db.VarChar(13)
   email_aluno      String    @unique @db.VarChar(50)
   senha_aluno      String    @db.VarChar(30)
+  celular_aluno    String?   @db.VarChar(13)
   nascimento_aluno DateTime?
   servicos         Servico[]
 
@@ -58,7 +58,7 @@ model Instrutor {
   nm_instrutor        String                    @db.VarChar(100)
   email_instrutor     String                    @unique @db.VarChar(50)
   senha_instrutor     String                    @db.VarChar(30)
-  cel_instrutor       String                    @db.VarChar(13)
+  cel_instrutor       String?                   @db.VarChar(13)
   cref_instrutor      String?                   @db.VarChar(11)
   avaliacao_instrutor Decimal?                  @db.Decimal(4, 2)
   intro_instrutor     String?                   @db.TinyText
@@ -72,32 +72,32 @@ model Instrutor {
 }
 
 model InstrutorEspecializacao {
-  id_instrutor      Int
-  id_especializacao Int
-  instrutor         Instrutor      @relation(fields: [id_instrutor], references: [id_instrutor])
-  especializacao    Especializacao @relation(fields: [id_especializacao], references: [id_especializacao])
+  id_instrutorEspecializacao Int            @id @default(autoincrement())
+  id_instrutor               Int
+  id_especializacao          Int
+  instrutor                  Instrutor      @relation(fields: [id_instrutor], references: [id_instrutor])
+  especializacao             Especializacao @relation(fields: [id_especializacao], references: [id_especializacao])
 
-  @@id([id_instrutor, id_especializacao])
   @@map("tb_instrutorEspecializacao")
 }
 
 model InstrutorQualificacao {
-  id_instrutor    Int
-  id_qualificacao Int
-  instrutor       Instrutor    @relation(fields: [id_instrutor], references: [id_instrutor])
-  qualificacao    Qualificacao @relation(fields: [id_qualificacao], references: [id_qualificacao])
+  id_instrutorQualificacao Int          @id @default(autoincrement())
+  id_instrutor             Int
+  id_qualificacao          Int
+  instrutor                Instrutor    @relation(fields: [id_instrutor], references: [id_instrutor])
+  qualificacao             Qualificacao @relation(fields: [id_qualificacao], references: [id_qualificacao])
 
-  @@id([id_instrutor, id_qualificacao])
   @@map("tb_instrutorQualificacao")
 }
 
 model InstrutorEndereco {
-  id_instrutor Int
-  id_endereco  Int
-  instrutor    Instrutor @relation(fields: [id_instrutor], references: [id_instrutor])
-  endereco     Endereco  @relation(fields: [id_endereco], references: [id_endereco])
+  id_instrutorEndereco Int       @id @default(autoincrement())
+  id_instrutor         Int
+  id_endereco          Int
+  instrutor            Instrutor @relation(fields: [id_instrutor], references: [id_instrutor])
+  endereco             Endereco  @relation(fields: [id_endereco], references: [id_endereco])
 
-  @@id([id_instrutor, id_endereco])
   @@map("tb_instrutorEndereco")
 }
 
