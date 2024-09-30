@@ -32,7 +32,7 @@ function duplicateErrorHandler(error: PrismaClientKnownRequestError) {
   let msg: string;
   if (error.meta) {
     const attr = String(error.meta.target).includes("email")
-      ? "email"
+      ? "Email"
       : String(error.meta.target);
     msg = `${attr} já cadastrado!`;
   } else {
