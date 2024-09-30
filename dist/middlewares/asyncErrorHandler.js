@@ -25,7 +25,7 @@ function duplicateErrorHandler(error) {
     let msg;
     if (error.meta) {
         const attr = String(error.meta.target).includes("email")
-            ? "email"
+            ? "Email"
             : String(error.meta.target);
         msg = `${attr} já cadastrado!`;
     }
