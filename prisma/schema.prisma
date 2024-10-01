@@ -55,7 +55,7 @@ model Endereco {
 
 model Instrutor {
   id_instrutor        Int                       @id @default(autoincrement())
-  nm_instrutor        String                    @db.VarChar(100)
+  nm_instrutor        String?                   @db.VarChar(100)
   email_instrutor     String                    @unique @db.VarChar(50)
   senha_instrutor     String                    @db.VarChar(30)
   cel_instrutor       String?                   @db.VarChar(13)

@@ -11,9 +11,9 @@ import asyncHandler from "../middlewares/asyncErrorHandler";
 const router = Router();
 
 router
-  .post("/", asyncHandler(postInstrutor))
+  .post("/cadastro", asyncHandler(postInstrutor))
   .get("/", asyncHandler(getInstrutores)) //(?esp=)
-  .get("/login", asyncHandler(getLoginInstrutor))
+  .post("/login", asyncHandler(getLoginInstrutor))
   .get("/especializacao", asyncHandler(getEspecializacoes))
   .get("/email", asyncHandler(getInstrutorByEmail));
 
