@@ -1,5 +1,9 @@
 import { Request, Response } from "express-serve-static-core";
-import { createAluno, findAlunoByEmail, findLoginAluno } from "../models/aluno.model";
+import {
+  createAluno,
+  findAlunoByEmail,
+  findLoginAluno,
+} from "../models/aluno.model";
 
 export async function postAluno(request: Request, response: Response) {
   const postAluno = await createAluno(request.body);
@@ -13,5 +17,9 @@ export async function getAlunoByEmail(request: Request, response: Response) {
 
 export async function getLoginAluno(request: Request, response: Response) {
   const resultado = await findLoginAluno(request.body);
-  return response.json(resultado);
+  if (resultado) {
+    return response.json(resultado);
+  } else {
+    return response.status(400).json(resultado);
+  }
 }

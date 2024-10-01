@@ -32,7 +32,11 @@ export async function getInstrutores(
 
 export async function getLoginInstrutor(request: Request, response: Response) {
   const resultado = await findLoginInstrutor(request.body);
-  return response.json(resultado);
+  if (resultado) {
+    return response.json(resultado);
+  } else {
+    return response.status(400).json(resultado);
+  }
 }
 
 export async function getEspecializacoes(request: Request, response: Response) {

@@ -20,7 +20,12 @@ async function getInstrutores(request, response) {
 }
 async function getLoginInstrutor(request, response) {
     const resultado = await (0, instrutor_model_1.findLoginInstrutor)(request.body);
-    return response.json(resultado);
+    if (resultado) {
+        return response.json(resultado);
+    }
+    else {
+        return response.status(400).json(resultado);
+    }
 }
 async function getEspecializacoes(request, response) {
     const resultado = await (0, instrutor_model_1.findEspecializacoes)();

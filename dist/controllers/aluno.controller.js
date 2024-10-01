@@ -14,5 +14,10 @@ async function getAlunoByEmail(request, response) {
 }
 async function getLoginAluno(request, response) {
     const resultado = await (0, aluno_model_1.findLoginAluno)(request.body);
-    return response.json(resultado);
+    if (resultado) {
+        return response.json(resultado);
+    }
+    else {
+        return response.status(400).json(resultado);
+    }
 }
