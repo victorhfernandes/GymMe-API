@@ -4,9 +4,12 @@ exports.createAluno = createAluno;
 exports.findAlunoByEmail = findAlunoByEmail;
 exports.findLoginAluno = findLoginAluno;
 const prisma_util_1 = require("../utils/prisma.util");
-async function createAluno(body) {
+async function createAluno(email_aluno, senha_aluno) {
     const resultado = await prisma_util_1.prisma.aluno.create({
-        data: body,
+        data: {
+            email_aluno: email_aluno,
+            senha_aluno: senha_aluno,
+        },
     });
     return resultado;
 }
@@ -22,15 +25,14 @@ async function findAlunoByEmail(body) {
     });
     return resultado;
 }
-async function findLoginAluno(body) {
-    const { email_aluno, senha_aluno } = body;
+async function findLoginAluno(email_aluno) {
     const resultado = await prisma_util_1.prisma.aluno.findUnique({
         where: {
             email_aluno: email_aluno,
-            senha_aluno: senha_aluno,
         },
         select: {
             id_aluno: true,
+            senha_aluno: true,
         },
     });
     return resultado;

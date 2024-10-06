@@ -2,11 +2,17 @@ import { Instrutor } from "@prisma/client";
 import { prisma } from "../utils/prisma.util";
 
 //Create
-export async function createInstrutor(body: Instrutor) {
-  const createInstrutorById = await prisma.instrutor.create({
-    data: body,
+export async function createInstrutor(
+  email_instrutor: string,
+  senha_instrutor: string
+) {
+  const resultado = await prisma.instrutor.create({
+    data: {
+      email_instrutor: email_instrutor,
+      senha_instrutor: senha_instrutor,
+    },
   });
-  return createInstrutorById;
+  return resultado;
 }
 
 //Read
@@ -36,15 +42,14 @@ export async function findInstrutoresByEspecializacao(especializacao: number) {
   return resultado;
 }
 
-export async function findLoginInstrutor(body: Instrutor) {
-  const { email_instrutor, senha_instrutor } = body;
+export async function findLoginInstrutor(email_instrutor: string) {
   const resultado = await prisma.instrutor.findUnique({
     where: {
       email_instrutor: email_instrutor,
-      senha_instrutor: senha_instrutor,
     },
     select: {
       id_instrutor: true,
+      senha_instrutor: true,
     },
   });
   return resultado;

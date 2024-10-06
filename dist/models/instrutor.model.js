@@ -8,11 +8,14 @@ exports.findEspecializacoes = findEspecializacoes;
 exports.findInstrutorByEmail = findInstrutorByEmail;
 const prisma_util_1 = require("../utils/prisma.util");
 //Create
-async function createInstrutor(body) {
-    const createInstrutorById = await prisma_util_1.prisma.instrutor.create({
-        data: body,
+async function createInstrutor(email_instrutor, senha_instrutor) {
+    const resultado = await prisma_util_1.prisma.instrutor.create({
+        data: {
+            email_instrutor: email_instrutor,
+            senha_instrutor: senha_instrutor,
+        },
     });
-    return createInstrutorById;
+    return resultado;
 }
 //Read
 async function findInstrutores() {
@@ -37,15 +40,14 @@ async function findInstrutoresByEspecializacao(especializacao) {
   ORDER BY i.id_instrutor;`;
     return resultado;
 }
-async function findLoginInstrutor(body) {
-    const { email_instrutor, senha_instrutor } = body;
+async function findLoginInstrutor(email_instrutor) {
     const resultado = await prisma_util_1.prisma.instrutor.findUnique({
         where: {
             email_instrutor: email_instrutor,
-            senha_instrutor: senha_instrutor,
         },
         select: {
             id_instrutor: true,
+            senha_instrutor: true,
         },
     });
     return resultado;

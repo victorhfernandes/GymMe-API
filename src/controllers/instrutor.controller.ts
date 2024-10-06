@@ -1,3 +1,4 @@
+import bcrypt from "bcrypt";
 import { Request, Response } from "express-serve-static-core";
 import {
   createInstrutor,
@@ -13,7 +14,9 @@ type queryEspecializacao = {
 };
 
 export async function postInstrutor(request: Request, response: Response) {
-  const resultado = await createInstrutor(request.body);
+  const { email_instrutor, senha_instrutor } = request.body;
+  const hash = await bcrypt.hash(senha_instrutor, 13);
+  const resultado = await createInstrutor(email_instrutor, hash);
   return response.status(201).json(resultado);
 }
 
@@ -31,9 +34,20 @@ export async function getInstrutores(
 }
 
 export async function getLoginInstrutor(request: Request, response: Response) {
-  const resultado = await findLoginInstrutor(request.body);
+  const { email_instrutor, senha_instrutor } = request.body;
+  const resultado = await findLoginInstrutor(email_instrutor);
   if (resultado) {
-    return response.json(resultado);
+    const isValid = await bcrypt.compare(
+      senha_instrutor,
+      resultado.senha_instrutor
+    );
+    if (isValid) {
+      return response.json({
+        id_instrutor: resultado.id_instrutor,
+      });
+    } else {
+      return response.status(400).json(null);
+    }
   } else {
     return response.status(400).json(resultado);
   }
