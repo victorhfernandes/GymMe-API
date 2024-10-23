@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.postAluno = postAluno;
-exports.getAlunoByEmail = getAlunoByEmail;
+exports.getAluno = getAluno;
 exports.getLoginAluno = getLoginAluno;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const aluno_model_1 = require("../models/aluno.model");
@@ -14,9 +14,11 @@ async function postAluno(request, response) {
     const resultado = await (0, aluno_model_1.createAluno)(email_aluno, hash);
     return response.status(201).json(resultado);
 }
-async function getAlunoByEmail(request, response) {
-    const resultado = await (0, aluno_model_1.findAlunoByEmail)(request.body);
-    return response.json(!!resultado); //retorna resultado convertido em boolean
+async function getAluno(request, response) {
+    const id_aluno = request.params.id;
+    const resultado = await (0, aluno_model_1.findAluno)(Number(id_aluno));
+    const isNull = areAllValuesNull(resultado);
+    return response.json(isNull);
 }
 async function getLoginAluno(request, response) {
     const { email_aluno, senha_aluno } = request.body;
@@ -34,5 +36,13 @@ async function getLoginAluno(request, response) {
     }
     else {
         return response.status(400).json(resultado);
+    }
+}
+function areAllValuesNull(obj) {
+    if (obj) {
+        return Object.values(obj).every((value) => value === null);
+    }
+    else {
+        return false;
     }
 }

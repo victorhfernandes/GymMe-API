@@ -1,8 +1,8 @@
 import { Router } from "express";
 import {
   postAluno,
-  getAlunoByEmail,
   getLoginAluno,
+  getAluno,
 } from "../controllers/aluno.controller";
 import asyncHandler from "../middlewares/asyncErrorHandler";
 
@@ -10,7 +10,7 @@ const router = Router();
 
 router
   .post("/cadastro", asyncHandler(postAluno))
-  .get("/email", asyncHandler(getAlunoByEmail))
+  .get("/:id", asyncHandler(getAluno))
   .post("/login", asyncHandler(getLoginAluno));
 
 export default router;

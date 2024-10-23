@@ -4,6 +4,7 @@ import { Router } from "express";
 
 const router = Router();
 
+router.get("/favicon.ico", function () {});
 router.all(
   "*",
   async function noExistingRoutesController(

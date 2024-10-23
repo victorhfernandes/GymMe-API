@@ -1,10 +1,13 @@
 import bcrypt from "bcrypt";
 import { Request, Response } from "express-serve-static-core";
-import {
-  createAluno,
-  findAlunoByEmail,
-  findLoginAluno,
-} from "../models/aluno.model";
+import { createAluno, findLoginAluno, findAluno } from "../models/aluno.model";
+import { Aluno } from "@prisma/client";
+
+type AlunoForms = {
+  nm_aluno: string | null;
+  celular_aluno: string | null;
+  nascimento_aluno: Date | null;
+} | null;
 
 export async function postAluno(request: Request, response: Response) {
   const { email_aluno, senha_aluno } = request.body;
@@ -13,9 +16,11 @@ export async function postAluno(request: Request, response: Response) {
   return response.status(201).json(resultado);
 }
 
-export async function getAlunoByEmail(request: Request, response: Response) {
-  const resultado = await findAlunoByEmail(request.body);
-  return response.json(!!resultado); //retorna resultado convertido em boolean
+export async function getAluno(request: Request, response: Response) {
+  const id_aluno = request.params.id;
+  const resultado = await findAluno(Number(id_aluno));
+  const isNull = areAllValuesNull(resultado);
+  return response.json(isNull);
 }
 
 export async function getLoginAluno(request: Request, response: Response) {
@@ -32,5 +37,13 @@ export async function getLoginAluno(request: Request, response: Response) {
     }
   } else {
     return response.status(400).json(resultado);
+  }
+}
+
+function areAllValuesNull(obj: AlunoForms): boolean {
+  if (obj) {
+    return Object.values(obj).every((value) => value === null);
+  } else {
+    return false;
   }
 }

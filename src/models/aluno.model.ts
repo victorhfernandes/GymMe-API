@@ -11,14 +11,15 @@ export async function createAluno(email_aluno: string, senha_aluno: string) {
   return resultado;
 }
 
-export async function findAlunoByEmail(body: Aluno) {
-  const { email_aluno } = body;
+export async function findAluno(id_aluno: number) {
   const resultado = await prisma.aluno.findUnique({
     where: {
-      email_aluno: email_aluno,
+      id_aluno: id_aluno,
     },
     select: {
-      id_aluno: true,
+      nm_aluno: true,
+      celular_aluno: true,
+      nascimento_aluno: true,
     },
   });
   return resultado;
