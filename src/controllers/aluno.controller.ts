@@ -1,6 +1,11 @@
 import bcrypt from "bcrypt";
 import { Request, Response } from "express-serve-static-core";
-import { createAluno, findLoginAluno, findAluno } from "../models/aluno.model";
+import {
+  createAluno,
+  createAlunoCompleto,
+  findLoginAluno,
+  findAluno,
+} from "../models/aluno.model";
 import { Aluno } from "@prisma/client";
 
 type AlunoForms = {
@@ -14,6 +19,20 @@ export async function postAluno(request: Request, response: Response) {
   const hash = await bcrypt.hash(senha_aluno, 13);
   const resultado = await createAluno(email_aluno, hash);
   return response.status(201).json(resultado);
+}
+
+export async function postAlunoCompleto(request: Request, response: Response) {
+  const { nm_aluno, celular_aluno, nascimento_aluno } = request.body;
+  console.log(nascimento_aluno);
+  const dtNascimento = new Date(nascimento_aluno);
+  const id = Number(request.params.id);
+  const resultado = await createAlunoCompleto(
+    nm_aluno,
+    celular_aluno,
+    dtNascimento,
+    id
+  );
+  return response.json(resultado);
 }
 
 export async function getAluno(request: Request, response: Response) {

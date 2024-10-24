@@ -9,6 +9,7 @@ const asyncErrorHandler_1 = __importDefault(require("../middlewares/asyncErrorHa
 const router = (0, express_1.Router)();
 router
     .post("/cadastro", (0, asyncErrorHandler_1.default)(aluno_controller_1.postAluno))
+    .patch("/cadastro/:id", (0, asyncErrorHandler_1.default)(aluno_controller_1.postAlunoCompleto))
     .get("/:id", (0, asyncErrorHandler_1.default)(aluno_controller_1.getAluno))
     .post("/login", (0, asyncErrorHandler_1.default)(aluno_controller_1.getLoginAluno));
 exports.default = router;
