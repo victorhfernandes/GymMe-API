@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createAluno = createAluno;
 exports.createAlunoCompleto = createAlunoCompleto;
-exports.findAluno = findAluno;
+exports.findAlunoById = findAlunoById;
 exports.findLoginAluno = findLoginAluno;
 const prisma_util_1 = require("../utils/prisma.util");
 async function createAluno(email_aluno, senha_aluno) {
@@ -27,7 +27,7 @@ async function createAlunoCompleto(nm_aluno, celular_aluno, nascimento_aluno, id
     });
     return resultado;
 }
-async function findAluno(id_aluno) {
+async function findAlunoById(id_aluno) {
     const resultado = await prisma_util_1.prisma.aluno.findUnique({
         where: {
             id_aluno: id_aluno,

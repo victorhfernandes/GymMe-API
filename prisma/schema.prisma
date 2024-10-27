@@ -16,6 +16,7 @@ datasource db {
 model Aluno {
   id_aluno         Int       @id @default(autoincrement())
   nm_aluno         String?   @db.VarChar(100)
+  cpf_aluno        String?   @db.VarChar(14)
   email_aluno      String    @unique @db.VarChar(50)
   senha_aluno      String    @db.Char(60)
   celular_aluno    String?   @db.VarChar(13)
@@ -54,19 +55,22 @@ model Endereco {
 }
 
 model Instrutor {
-  id_instrutor        Int                       @id @default(autoincrement())
-  nm_instrutor        String?                   @db.VarChar(100)
-  email_instrutor     String                    @unique @db.VarChar(50)
-  senha_instrutor     String                    @db.Char(60)
-  cel_instrutor       String?                   @db.VarChar(13)
-  cref_instrutor      String?                   @db.VarChar(11)
-  avaliacao_instrutor Decimal?                  @db.Decimal(4, 2)
-  intro_instrutor     String?                   @db.TinyText
-  especializacoes     InstrutorEspecializacao[]
-  qualificacoes       InstrutorQualificacao[]
-  enderecos           InstrutorEndereco[]
-  links               Link[]
-  servicos            Servico[]
+  id_instrutor         Int                       @id @default(autoincrement())
+  nm_instrutor         String?                   @db.VarChar(100)
+  cpf_instrutor        String?                   @db.VarChar(14)
+  foto_perfil          String?                   @db.VarChar(255)
+  email_instrutor      String                    @unique @db.VarChar(50)
+  senha_instrutor      String                    @db.Char(60)
+  cel_instrutor        String?                   @db.VarChar(13)
+  cref_instrutor       String?                   @db.VarChar(11)
+  avaliacao_instrutor  Decimal?                  @db.Decimal(4, 2)
+  intro_instrutor      String?                   @db.TinyText
+  nascimento_instrutor DateTime?
+  especializacoes      InstrutorEspecializacao[]
+  qualificacoes        InstrutorQualificacao[]
+  enderecos            InstrutorEndereco[]
+  links                Link[]
+  servicos             Servico[]
 
   @@map("tb_instrutor")
 }

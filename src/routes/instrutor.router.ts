@@ -1,7 +1,9 @@
 import { Router } from "express";
 import {
   postInstrutor,
+  postInstrutorCompleto,
   getInstrutores,
+  getInstrutorById,
   getLoginInstrutor,
   getEspecializacoes,
   getInstrutorByEmail,
@@ -12,9 +14,11 @@ const router = Router();
 
 router
   .post("/cadastro", asyncHandler(postInstrutor))
+  .patch("/cadastro/:id", asyncHandler(postInstrutorCompleto))
   .get("/", asyncHandler(getInstrutores)) //(?esp=)
-  .post("/login", asyncHandler(getLoginInstrutor))
   .get("/especializacao", asyncHandler(getEspecializacoes))
+  .get("/:id", asyncHandler(getInstrutorById))
+  .post("/login", asyncHandler(getLoginInstrutor))
   .get("/email", asyncHandler(getInstrutorByEmail));
 
 export default router;

@@ -9,8 +9,10 @@ const asyncErrorHandler_1 = __importDefault(require("../middlewares/asyncErrorHa
 const router = (0, express_1.Router)();
 router
     .post("/cadastro", (0, asyncErrorHandler_1.default)(instrutor_controller_1.postInstrutor))
+    .patch("/cadastro/:id", (0, asyncErrorHandler_1.default)(instrutor_controller_1.postInstrutorCompleto))
     .get("/", (0, asyncErrorHandler_1.default)(instrutor_controller_1.getInstrutores)) //(?esp=)
-    .post("/login", (0, asyncErrorHandler_1.default)(instrutor_controller_1.getLoginInstrutor))
     .get("/especializacao", (0, asyncErrorHandler_1.default)(instrutor_controller_1.getEspecializacoes))
+    .get("/:id", (0, asyncErrorHandler_1.default)(instrutor_controller_1.getInstrutorById))
+    .post("/login", (0, asyncErrorHandler_1.default)(instrutor_controller_1.getLoginInstrutor))
     .get("/email", (0, asyncErrorHandler_1.default)(instrutor_controller_1.getInstrutorByEmail));
 exports.default = router;

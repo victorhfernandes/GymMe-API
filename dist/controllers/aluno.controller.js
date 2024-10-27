@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.postAluno = postAluno;
 exports.postAlunoCompleto = postAlunoCompleto;
-exports.getAluno = getAluno;
+exports.getAlunoById = getAlunoById;
 exports.getLoginAluno = getLoginAluno;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const aluno_model_1 = require("../models/aluno.model");
@@ -23,9 +23,9 @@ async function postAlunoCompleto(request, response) {
     const resultado = await (0, aluno_model_1.createAlunoCompleto)(nm_aluno, celular_aluno, dtNascimento, id);
     return response.json(resultado);
 }
-async function getAluno(request, response) {
+async function getAlunoById(request, response) {
     const id_aluno = request.params.id;
-    const resultado = await (0, aluno_model_1.findAluno)(Number(id_aluno));
+    const resultado = await (0, aluno_model_1.findAlunoById)(Number(id_aluno));
     const isNull = areAllValuesNull(resultado);
     return response.json(isNull);
 }

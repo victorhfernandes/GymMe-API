@@ -4,7 +4,7 @@ import {
   createAluno,
   createAlunoCompleto,
   findLoginAluno,
-  findAluno,
+  findAlunoById,
 } from "../models/aluno.model";
 import { Aluno } from "@prisma/client";
 
@@ -35,9 +35,9 @@ export async function postAlunoCompleto(request: Request, response: Response) {
   return response.json(resultado);
 }
 
-export async function getAluno(request: Request, response: Response) {
+export async function getAlunoById(request: Request, response: Response) {
   const id_aluno = request.params.id;
-  const resultado = await findAluno(Number(id_aluno));
+  const resultado = await findAlunoById(Number(id_aluno));
   const isNull = areAllValuesNull(resultado);
   return response.json(isNull);
 }

@@ -4,7 +4,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.postInstrutor = postInstrutor;
+exports.postInstrutorCompleto = postInstrutorCompleto;
 exports.getInstrutores = getInstrutores;
+exports.getInstrutorById = getInstrutorById;
 exports.getLoginInstrutor = getLoginInstrutor;
 exports.getEspecializacoes = getEspecializacoes;
 exports.getInstrutorByEmail = getInstrutorByEmail;
@@ -16,6 +18,17 @@ async function postInstrutor(request, response) {
     const resultado = await (0, instrutor_model_1.createInstrutor)(email_instrutor, hash);
     return response.status(201).json(resultado);
 }
+async function postInstrutorCompleto(request, response) {
+    const { nm_instrutor, cel_instrutor, nascimento_instrutor, foto_perfil, especializacoes, } = request.body;
+    const renamedData = especializacoes.map((item) => ({
+        id_especializacao: item.value,
+        nm_especializacao: item.label,
+    }));
+    const dtNascimento = new Date(nascimento_instrutor);
+    const id = Number(request.params.id);
+    const resultado = await (0, instrutor_model_1.createInstrutorCompleto)(nm_instrutor, cel_instrutor, dtNascimento, renamedData, foto_perfil, id);
+    return response.json(resultado);
+}
 /*Faz pesquisa de instrutores por Id de Especialização caso seja definido na url (?esp=),
 caso não retorna todos os instrutores*/
 async function getInstrutores(request, response) {
@@ -23,6 +36,12 @@ async function getInstrutores(request, response) {
         ? await (0, instrutor_model_1.findInstrutoresByEspecializacao)(request.query.esp)
         : await (0, instrutor_model_1.findInstrutores)();
     return response.json(resultado);
+}
+async function getInstrutorById(request, response) {
+    const id_instrutor = request.params.id;
+    const resultado = await (0, instrutor_model_1.findInstrutorById)(Number(id_instrutor));
+    const isNull = areAllValuesNull(resultado);
+    return response.json(isNull);
 }
 async function getLoginInstrutor(request, response) {
     const { email_instrutor, senha_instrutor } = request.body;
@@ -44,9 +63,21 @@ async function getLoginInstrutor(request, response) {
 }
 async function getEspecializacoes(request, response) {
     const resultado = await (0, instrutor_model_1.findEspecializacoes)();
-    return response.json(resultado);
+    const renamedData = resultado.map((item) => ({
+        value: item.id_especializacao,
+        label: item.nm_especializacao,
+    }));
+    return response.json(renamedData);
 }
 async function getInstrutorByEmail(request, response) {
     const resultado = await (0, instrutor_model_1.findInstrutorByEmail)(request.body);
     return response.json(!!resultado); //retorna resultado convertido em boolean
+}
+function areAllValuesNull(obj) {
+    if (obj) {
+        return Object.values(obj).every((value) => value === null);
+    }
+    else {
+        return false;
+    }
 }

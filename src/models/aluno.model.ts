@@ -30,7 +30,7 @@ export async function createAlunoCompleto(
   return resultado;
 }
 
-export async function findAluno(id_aluno: number) {
+export async function findAlunoById(id_aluno: number) {
   const resultado = await prisma.aluno.findUnique({
     where: {
       id_aluno: id_aluno,
