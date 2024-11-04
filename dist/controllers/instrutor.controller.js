@@ -32,16 +32,23 @@ async function postInstrutorCompleto(request, response) {
 /*Faz pesquisa de instrutores por Id de Especialização caso seja definido na url (?esp=),
 caso não retorna todos os instrutores*/
 async function getInstrutores(request, response) {
-    const resultado = request.query.esp
-        ? await (0, instrutor_model_1.findInstrutoresByEspecializacao)(request.query.esp)
-        : await (0, instrutor_model_1.findInstrutores)();
+    // const resultado = request.query.esp
+    //   ? await findInstrutoresByEspecializacao(request.query.esp)
+    //   : await findInstrutores();
+    const arrayEsp = Array.isArray(request.query.esp)
+        ? request.query.esp.map(Number)
+        : [request.query.esp];
+    const resultado = await (0, instrutor_model_1.findInstrutores)(arrayEsp);
     return response.json(resultado);
 }
 async function getInstrutorById(request, response) {
     const id_instrutor = request.params.id;
     const resultado = await (0, instrutor_model_1.findInstrutorById)(Number(id_instrutor));
-    const isNull = areAllValuesNull(resultado);
-    return response.json(isNull);
+    if (request.query.isCadCompleto) {
+        const isCadCompleto = !areAllValuesNull(resultado);
+        return response.json(isCadCompleto);
+    }
+    return response.json(resultado);
 }
 async function getLoginInstrutor(request, response) {
     const { email_instrutor, senha_instrutor } = request.body;
@@ -74,8 +81,11 @@ async function getInstrutorByEmail(request, response) {
     return response.json(!!resultado); //retorna resultado convertido em boolean
 }
 function areAllValuesNull(obj) {
+    console.log("oiiii");
     if (obj) {
-        return Object.values(obj).every((value) => value === null);
+        return !obj.nm_instrutor && !obj.cel_instrutor && !obj.cpf_instrutor
+            ? true
+            : false;
     }
     else {
         return false;

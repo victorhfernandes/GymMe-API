@@ -46,15 +46,67 @@ export async function createInstrutorCompleto(
 }
 
 //Read
-export async function findInstrutores() {
-  const resultado = await prisma.$queryRaw`SELECT
-    i.nm_instrutor AS nome, i.foto_perfil AS foto,
-    GROUP_CONCAT(e.nm_especializacao ORDER BY e.nm_especializacao SEPARATOR '; ') AS especializacoes
-    FROM tb_instrutorEspecializacao ie
-    JOIN tb_instrutor i ON ie.id_instrutor = i.id_instrutor
-    JOIN tb_especializacao e ON ie.id_especializacao = e.id_especializacao
-    GROUP BY i.id_instrutor
-    ORDER BY i.id_instrutor;`;
+export async function findInstrutores(id_especializacao: number[]) {
+  let instrutores;
+  if (id_especializacao[0]) {
+    instrutores = await prisma.instrutor.findMany({
+      where: {
+        especializacoes: {
+          some: {
+            especializacao: {
+              id_especializacao: {
+                in: id_especializacao,
+              },
+            },
+          },
+        },
+      },
+      select: {
+        nm_instrutor: true,
+        foto_perfil: true,
+        especializacoes: {
+          select: {
+            especializacao: {
+              select: {
+                nm_especializacao: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: {
+        id_instrutor: "asc",
+      },
+    });
+  } else {
+    instrutores = await prisma.instrutor.findMany({
+      select: {
+        nm_instrutor: true,
+        foto_perfil: true,
+        especializacoes: {
+          select: {
+            especializacao: {
+              select: {
+                nm_especializacao: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: {
+        id_instrutor: "asc",
+      },
+    });
+  }
+
+  const resultado = instrutores.map((instrutor) => ({
+    nome: instrutor.nm_instrutor,
+    foto: instrutor.foto_perfil,
+    especializacoes: instrutor.especializacoes
+      .map((e) => e.especializacao.nm_especializacao)
+      .sort()
+      .join("; "),
+  }));
 
   return resultado;
 }
@@ -66,24 +118,14 @@ export async function findInstrutorById(id_instrutor: number) {
     },
     select: {
       nm_instrutor: true,
+      email_instrutor: true,
       cel_instrutor: true,
+      cref_instrutor: true,
       nascimento_instrutor: true,
+      foto_perfil: true,
+      cpf_instrutor: true,
     },
   });
-  return resultado;
-}
-
-//Implementar OR no WHERE
-export async function findInstrutoresByEspecializacao(especializacao: number) {
-  const resultado = await prisma.$queryRaw`SELECT i.nm_instrutor AS nome, 
-  GROUP_CONCAT(e.nm_especializacao ORDER BY e.nm_especializacao SEPARATOR '; ') AS especializacoes
-  FROM tb_instrutorEspecializacao ie
-  JOIN tb_instrutor i ON ie.id_instrutor = i.id_instrutor
-  JOIN tb_especializacao e ON ie.id_especializacao = e.id_especializacao
-  WHERE e.id_especializacao = ${especializacao} 
-  GROUP BY i.id_instrutor
-  ORDER BY i.id_instrutor;`;
-
   return resultado;
 }
 

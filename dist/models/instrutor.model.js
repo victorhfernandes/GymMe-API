@@ -4,7 +4,6 @@ exports.createInstrutor = createInstrutor;
 exports.createInstrutorCompleto = createInstrutorCompleto;
 exports.findInstrutores = findInstrutores;
 exports.findInstrutorById = findInstrutorById;
-exports.findInstrutoresByEspecializacao = findInstrutoresByEspecializacao;
 exports.findLoginInstrutor = findLoginInstrutor;
 exports.findEspecializacoes = findEspecializacoes;
 exports.findInstrutorByEmail = findInstrutorByEmail;
@@ -42,15 +41,67 @@ async function createInstrutorCompleto(nm_instrutor, cel_instrutor, nascimento_i
     return resultado.id_instrutor === id;
 }
 //Read
-async function findInstrutores() {
-    const resultado = await prisma_util_1.prisma.$queryRaw `SELECT
-    i.nm_instrutor AS nome, i.foto_perfil AS foto,
-    GROUP_CONCAT(e.nm_especializacao ORDER BY e.nm_especializacao SEPARATOR '; ') AS especializacoes
-    FROM tb_instrutorEspecializacao ie
-    JOIN tb_instrutor i ON ie.id_instrutor = i.id_instrutor
-    JOIN tb_especializacao e ON ie.id_especializacao = e.id_especializacao
-    GROUP BY i.id_instrutor
-    ORDER BY i.id_instrutor;`;
+async function findInstrutores(id_especializacao) {
+    let instrutores;
+    if (id_especializacao[0]) {
+        instrutores = await prisma_util_1.prisma.instrutor.findMany({
+            where: {
+                especializacoes: {
+                    some: {
+                        especializacao: {
+                            id_especializacao: {
+                                in: id_especializacao,
+                            },
+                        },
+                    },
+                },
+            },
+            select: {
+                nm_instrutor: true,
+                foto_perfil: true,
+                especializacoes: {
+                    select: {
+                        especializacao: {
+                            select: {
+                                nm_especializacao: true,
+                            },
+                        },
+                    },
+                },
+            },
+            orderBy: {
+                id_instrutor: "asc",
+            },
+        });
+    }
+    else {
+        instrutores = await prisma_util_1.prisma.instrutor.findMany({
+            select: {
+                nm_instrutor: true,
+                foto_perfil: true,
+                especializacoes: {
+                    select: {
+                        especializacao: {
+                            select: {
+                                nm_especializacao: true,
+                            },
+                        },
+                    },
+                },
+            },
+            orderBy: {
+                id_instrutor: "asc",
+            },
+        });
+    }
+    const resultado = instrutores.map((instrutor) => ({
+        nome: instrutor.nm_instrutor,
+        foto: instrutor.foto_perfil,
+        especializacoes: instrutor.especializacoes
+            .map((e) => e.especializacao.nm_especializacao)
+            .sort()
+            .join("; "),
+    }));
     return resultado;
 }
 async function findInstrutorById(id_instrutor) {
@@ -60,22 +111,14 @@ async function findInstrutorById(id_instrutor) {
         },
         select: {
             nm_instrutor: true,
+            email_instrutor: true,
             cel_instrutor: true,
+            cref_instrutor: true,
             nascimento_instrutor: true,
+            foto_perfil: true,
+            cpf_instrutor: true,
         },
     });
-    return resultado;
-}
-//Implementar OR no WHERE
-async function findInstrutoresByEspecializacao(especializacao) {
-    const resultado = await prisma_util_1.prisma.$queryRaw `SELECT i.nm_instrutor AS nome, 
-  GROUP_CONCAT(e.nm_especializacao ORDER BY e.nm_especializacao SEPARATOR '; ') AS especializacoes
-  FROM tb_instrutorEspecializacao ie
-  JOIN tb_instrutor i ON ie.id_instrutor = i.id_instrutor
-  JOIN tb_especializacao e ON ie.id_especializacao = e.id_especializacao
-  WHERE e.id_especializacao = ${especializacao} 
-  GROUP BY i.id_instrutor
-  ORDER BY i.id_instrutor;`;
     return resultado;
 }
 async function findLoginInstrutor(email_instrutor) {

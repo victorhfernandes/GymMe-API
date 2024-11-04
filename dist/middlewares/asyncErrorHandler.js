@@ -13,9 +13,6 @@ function asyncHandler(func) {
                 if (prismaError.code === "P2002") {
                     error = duplicateErrorHandler(prismaError);
                 }
-                if (prismaError.code === "P2010") {
-                    error = new CustomError_1.default("Insira somente uma especialização!", 400);
-                }
             }
             next(error);
         });

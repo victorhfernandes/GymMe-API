@@ -3,7 +3,7 @@ import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import CustomError from "../utils/CustomError";
 
 type AsyncFunc = (
-  request: Request<{}, {}, {}, any>,
+  request: Request<any, any, any, any>,
   response: Response,
   next: NextFunction
 ) => Promise<Response>;
@@ -18,9 +18,6 @@ export default function asyncHandler(func: AsyncFunc) {
       if (prismaError.code) {
         if (prismaError.code === "P2002") {
           error = duplicateErrorHandler(prismaError);
-        }
-        if (prismaError.code === "P2010") {
-          error = new CustomError("Insira somente uma especialização!", 400);
         }
       }
       next(error);

@@ -7,7 +7,6 @@ import {
   findInstrutorById,
   findLoginInstrutor,
   findEspecializacoes,
-  findInstrutoresByEspecializacao,
   findInstrutorByEmail,
 } from "../models/instrutor.model";
 
@@ -15,10 +14,19 @@ type queryEspecializacao = {
   esp: number;
 };
 
+type queryInstrutor = {
+  isCadCompleto: string;
+};
+
+type paramsInstrutor = {
+  id: string;
+};
+
 type InstrutorForms = {
   nm_instrutor: string | null;
   cel_instrutor: string | null;
   nascimento_instrutor: Date | null;
+  cpf_instrutor: string | null;
 } | null;
 
 type EspecializacaoFront = {
@@ -44,10 +52,12 @@ export async function postInstrutorCompleto(
     foto_perfil,
     especializacoes,
   } = request.body;
+
   const renamedData = especializacoes.map((item: EspecializacaoFront) => ({
     id_especializacao: item.value,
     nm_especializacao: item.label,
   }));
+
   const dtNascimento = new Date(nascimento_instrutor);
   const id = Number(request.params.id);
   const resultado = await createInstrutorCompleto(
@@ -67,18 +77,29 @@ export async function getInstrutores(
   request: Request<{}, {}, {}, queryEspecializacao>,
   response: Response
 ) {
-  const resultado = request.query.esp
-    ? await findInstrutoresByEspecializacao(request.query.esp)
-    : await findInstrutores();
+  // const resultado = request.query.esp
+  //   ? await findInstrutoresByEspecializacao(request.query.esp)
+  //   : await findInstrutores();
+
+  const arrayEsp = Array.isArray(request.query.esp)
+    ? request.query.esp.map(Number)
+    : [request.query.esp];
+  const resultado = await findInstrutores(arrayEsp);
 
   return response.json(resultado);
 }
 
-export async function getInstrutorById(request: Request, response: Response) {
+export async function getInstrutorById(
+  request: Request<paramsInstrutor, {}, {}, queryInstrutor>,
+  response: Response
+) {
   const id_instrutor = request.params.id;
   const resultado = await findInstrutorById(Number(id_instrutor));
-  const isNull = areAllValuesNull(resultado);
-  return response.json(isNull);
+  if (request.query.isCadCompleto) {
+    const isCadCompleto = !areAllValuesNull(resultado);
+    return response.json(isCadCompleto);
+  }
+  return response.json(resultado);
 }
 
 export async function getLoginInstrutor(request: Request, response: Response) {
@@ -119,8 +140,11 @@ export async function getInstrutorByEmail(
 }
 
 function areAllValuesNull(obj: InstrutorForms): boolean {
+  console.log("oiiii");
   if (obj) {
-    return Object.values(obj).every((value) => value === null);
+    return !obj.nm_instrutor && !obj.cel_instrutor && !obj.cpf_instrutor
+      ? true
+      : false;
   } else {
     return false;
   }
