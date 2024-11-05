@@ -32,12 +32,9 @@ async function postInstrutorCompleto(request, response) {
 /*Faz pesquisa de instrutores por Id de Especialização caso seja definido na url (?esp=),
 caso não retorna todos os instrutores*/
 async function getInstrutores(request, response) {
-    // const resultado = request.query.esp
-    //   ? await findInstrutoresByEspecializacao(request.query.esp)
-    //   : await findInstrutores();
     const arrayEsp = Array.isArray(request.query.esp)
         ? request.query.esp.map(Number)
-        : [request.query.esp];
+        : [Number(request.query.esp)];
     const resultado = await (0, instrutor_model_1.findInstrutores)(arrayEsp);
     return response.json(resultado);
 }
@@ -81,7 +78,6 @@ async function getInstrutorByEmail(request, response) {
     return response.json(!!resultado); //retorna resultado convertido em boolean
 }
 function areAllValuesNull(obj) {
-    console.log("oiiii");
     if (obj) {
         return !obj.nm_instrutor && !obj.cel_instrutor && !obj.cpf_instrutor
             ? true

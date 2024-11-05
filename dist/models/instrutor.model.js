@@ -94,7 +94,8 @@ async function findInstrutores(id_especializacao) {
             },
         });
     }
-    const resultado = instrutores.map((instrutor) => ({
+    const notNullInstrutores = instrutores.filter((item) => item.nm_instrutor);
+    const resultado = notNullInstrutores.map((instrutor) => ({
         nome: instrutor.nm_instrutor,
         foto: instrutor.foto_perfil,
         especializacoes: instrutor.especializacoes

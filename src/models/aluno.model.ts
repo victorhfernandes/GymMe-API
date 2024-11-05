@@ -39,6 +39,7 @@ export async function findAlunoById(id_aluno: number) {
       nm_aluno: true,
       celular_aluno: true,
       nascimento_aluno: true,
+      cpf_aluno: true,
     },
   });
   return resultado;

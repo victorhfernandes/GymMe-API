@@ -14,14 +14,6 @@ type queryEspecializacao = {
   esp: number;
 };
 
-type queryInstrutor = {
-  isCadCompleto: string;
-};
-
-type paramsInstrutor = {
-  id: string;
-};
-
 type InstrutorForms = {
   nm_instrutor: string | null;
   cel_instrutor: string | null;
@@ -77,22 +69,15 @@ export async function getInstrutores(
   request: Request<{}, {}, {}, queryEspecializacao>,
   response: Response
 ) {
-  // const resultado = request.query.esp
-  //   ? await findInstrutoresByEspecializacao(request.query.esp)
-  //   : await findInstrutores();
-
   const arrayEsp = Array.isArray(request.query.esp)
     ? request.query.esp.map(Number)
-    : [request.query.esp];
+    : [Number(request.query.esp)];
   const resultado = await findInstrutores(arrayEsp);
 
   return response.json(resultado);
 }
 
-export async function getInstrutorById(
-  request: Request<paramsInstrutor, {}, {}, queryInstrutor>,
-  response: Response
-) {
+export async function getInstrutorById(request: Request, response: Response) {
   const id_instrutor = request.params.id;
   const resultado = await findInstrutorById(Number(id_instrutor));
   if (request.query.isCadCompleto) {
@@ -140,7 +125,6 @@ export async function getInstrutorByEmail(
 }
 
 function areAllValuesNull(obj: InstrutorForms): boolean {
-  console.log("oiiii");
   if (obj) {
     return !obj.nm_instrutor && !obj.cel_instrutor && !obj.cpf_instrutor
       ? true

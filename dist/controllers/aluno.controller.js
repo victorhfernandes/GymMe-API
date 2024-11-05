@@ -26,8 +26,11 @@ async function postAlunoCompleto(request, response) {
 async function getAlunoById(request, response) {
     const id_aluno = request.params.id;
     const resultado = await (0, aluno_model_1.findAlunoById)(Number(id_aluno));
-    const isNull = areAllValuesNull(resultado);
-    return response.json(isNull);
+    if (request.query.isCadCompleto) {
+        const isCadCompleto = !areAllValuesNull(resultado);
+        return response.json(isCadCompleto);
+    }
+    return response.json(resultado);
 }
 async function getLoginAluno(request, response) {
     const { email_aluno, senha_aluno } = request.body;

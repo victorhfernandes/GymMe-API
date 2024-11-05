@@ -6,7 +6,6 @@ import {
   findLoginAluno,
   findAlunoById,
 } from "../models/aluno.model";
-import { Aluno } from "@prisma/client";
 
 type AlunoForms = {
   nm_aluno: string | null;
@@ -38,8 +37,11 @@ export async function postAlunoCompleto(request: Request, response: Response) {
 export async function getAlunoById(request: Request, response: Response) {
   const id_aluno = request.params.id;
   const resultado = await findAlunoById(Number(id_aluno));
-  const isNull = areAllValuesNull(resultado);
-  return response.json(isNull);
+  if (request.query.isCadCompleto) {
+    const isCadCompleto = !areAllValuesNull(resultado);
+    return response.json(isCadCompleto);
+  }
+  return response.json(resultado);
 }
 
 export async function getLoginAluno(request: Request, response: Response) {
