@@ -8,8 +8,19 @@ exports.postInstrutorCompleto = postInstrutorCompleto;
 exports.getInstrutores = getInstrutores;
 exports.getInstrutorById = getInstrutorById;
 exports.getLoginInstrutor = getLoginInstrutor;
-exports.getEspecializacoes = getEspecializacoes;
 exports.getInstrutorByEmail = getInstrutorByEmail;
+exports.getServicosInstrutorByStatus = getServicosInstrutorByStatus;
+exports.putServicoStatus = putServicoStatus;
+exports.getPlanilhas = getPlanilhas;
+exports.postPlanilha = postPlanilha;
+exports.postTreino = postTreino;
+exports.getEspecializacoes = getEspecializacoes;
+exports.getGrupoMuscular = getGrupoMuscular;
+exports.getCertificacao = getCertificacao;
+exports.getCidade = getCidade;
+exports.getExperiencia = getExperiencia;
+exports.deleteTreino = deleteTreino;
+exports.deletePlanilha = deletePlanilha;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const instrutor_model_1 = require("../models/instrutor.model");
 async function postInstrutor(request, response) {
@@ -19,14 +30,28 @@ async function postInstrutor(request, response) {
     return response.status(201).json(resultado);
 }
 async function postInstrutorCompleto(request, response) {
-    const { nm_instrutor, cel_instrutor, nascimento_instrutor, foto_perfil, especializacoes, } = request.body;
-    const renamedData = especializacoes.map((item) => ({
-        id_especializacao: item.value,
-        nm_especializacao: item.label,
+    const { nm_instrutor, celular_instrutor, nascimento_instrutor, foto_perfil, cpf_instrutor, especializacoes, certificacoes, experiencias, cidades, } = request.body;
+    /*
+    const Iespecializacoes = especializacoes.map((item: Select) => ({
+      id_especializacao: item.value,
+      nm_especializacao: item.label,
     }));
+    const Icertificacoes = certificacoes.map((item: Select) => ({
+      id_certificacao: item.value,
+      nm_certificacao: item.label,
+    }));
+    const Iexperiencias = experiencias.map((item: Select) => ({
+      id_experiencia: item.value,
+      nm_experiencia: item.label,
+    }));
+    const Icidades = cidades.map((item: Select) => ({
+      id_cidade: item.value,
+      nm_cidade: item.label,
+    }));
+    */
     const dtNascimento = new Date(nascimento_instrutor);
     const id = Number(request.params.id);
-    const resultado = await (0, instrutor_model_1.createInstrutorCompleto)(nm_instrutor, cel_instrutor, dtNascimento, renamedData, foto_perfil, id);
+    const resultado = await (0, instrutor_model_1.createInstrutorCompleto)(nm_instrutor, celular_instrutor, dtNascimento, especializacoes, certificacoes, experiencias, cidades, foto_perfil, cpf_instrutor, id);
     return response.json(resultado);
 }
 /*Faz pesquisa de instrutores por Id de Especialização caso seja definido na url (?esp=),
@@ -40,10 +65,13 @@ async function getInstrutores(request, response) {
 }
 async function getInstrutorById(request, response) {
     const id_instrutor = request.params.id;
-    const resultado = await (0, instrutor_model_1.findInstrutorById)(Number(id_instrutor));
-    if (request.query.isCadCompleto) {
-        const isCadCompleto = !areAllValuesNull(resultado);
-        return response.json(isCadCompleto);
+    const compl = request.query.compl;
+    const resultado = !compl
+        ? await (0, instrutor_model_1.findInstrutorById)(Number(id_instrutor))
+        : await (0, instrutor_model_1.findInstrutorByIdCompleto)(Number(id_instrutor));
+    if (request.query.isCadCompl) {
+        const isCadCompl = !areAllValuesNull(resultado);
+        return response.json(isCadCompl);
     }
     return response.json(resultado);
 }
@@ -65,6 +93,49 @@ async function getLoginInstrutor(request, response) {
         return response.status(400).json(resultado);
     }
 }
+async function getInstrutorByEmail(request, response) {
+    const resultado = await (0, instrutor_model_1.findInstrutorByEmail)(request.body);
+    return response.json(!!resultado); //retorna resultado convertido em boolean
+}
+async function getServicosInstrutorByStatus(request, response) {
+    const id = Number(request.params.id);
+    const status = request.params.status === "true"
+        ? true
+        : request.params.status === "false"
+            ? false
+            : null;
+    const resultado = await (0, instrutor_model_1.findServicosInstrutorByStatus)(id, status);
+    return response.json(resultado);
+}
+async function putServicoStatus(request, response) {
+    const idInstrutor = Number(request.params.idInstrutor);
+    const idAluno = Number(request.params.idAluno);
+    const { statusServico } = request.body;
+    const statusPagamento = statusServico ? false : null;
+    const resultado = await (0, instrutor_model_1.updateServicoStatus)(idInstrutor, idAluno, statusServico, statusPagamento);
+    if (resultado) {
+        return response.json(resultado);
+    }
+    else {
+        return response.status(400).json(resultado);
+    }
+}
+async function getPlanilhas(request, response) {
+    const idInstrutor = Number(request.params.idInstrutor);
+    const idAluno = Number(request.params.idAluno);
+    const resultado = await (0, instrutor_model_1.findPlanilhas)(idInstrutor, idAluno);
+    return response.json(resultado);
+}
+async function postPlanilha(request, response) {
+    const { nm_planilha, id_servico } = request.body;
+    const resultado = await (0, instrutor_model_1.createPlanilha)(nm_planilha, id_servico);
+    return response.json(resultado);
+}
+async function postTreino(request, response) {
+    const { nm_exercicio, id_grupoMuscular, id_planilha, qt_treino, qt_serie, kg_carga, ds_treino, gif_exercicio, } = request.body;
+    const resultado = await (0, instrutor_model_1.createTreino)(nm_exercicio, Number(id_grupoMuscular), Number(id_planilha), Number(qt_treino), Number(qt_serie), Number(kg_carga), ds_treino, gif_exercicio);
+    return response.json(resultado);
+}
 async function getEspecializacoes(request, response) {
     const resultado = await (0, instrutor_model_1.findEspecializacoes)();
     const renamedData = resultado.map((item) => ({
@@ -73,15 +144,51 @@ async function getEspecializacoes(request, response) {
     }));
     return response.json(renamedData);
 }
-async function getInstrutorByEmail(request, response) {
-    const resultado = await (0, instrutor_model_1.findInstrutorByEmail)(request.body);
-    return response.json(!!resultado); //retorna resultado convertido em boolean
+async function getGrupoMuscular(request, response) {
+    const resultado = await (0, instrutor_model_1.findGrupoMuscular)();
+    const renamedData = resultado.map((item) => ({
+        value: item.id_grupoMuscular,
+        label: item.nm_grupoMuscular,
+    }));
+    return response.json(renamedData);
+}
+async function getCertificacao(request, response) {
+    const resultado = await (0, instrutor_model_1.findCertificacao)();
+    const renamedData = resultado.map((item) => ({
+        value: item.id_certificacao,
+        label: item.nm_certificacao,
+    }));
+    return response.json(renamedData);
+}
+async function getCidade(request, response) {
+    const resultado = await (0, instrutor_model_1.findCidade)();
+    const renamedData = resultado.map((item) => ({
+        value: item.id_cidade,
+        label: item.nm_cidade,
+    }));
+    return response.json(renamedData);
+}
+async function getExperiencia(request, response) {
+    const resultado = await (0, instrutor_model_1.findExperiencia)();
+    const renamedData = resultado.map((item) => ({
+        value: item.id_experiencia,
+        label: item.nm_experiencia,
+    }));
+    return response.json(renamedData);
+}
+async function deleteTreino(request, response) {
+    const { id_treino } = request.body;
+    const resultado = await (0, instrutor_model_1.eraseTreino)(id_treino);
+    return response.json(resultado);
+}
+async function deletePlanilha(request, response) {
+    const { id_planilha } = request.body;
+    const resultado = await (0, instrutor_model_1.erasePlanilha)(id_planilha);
+    return response.json(resultado);
 }
 function areAllValuesNull(obj) {
     if (obj) {
-        return !obj.nm_instrutor && !obj.cel_instrutor && !obj.cpf_instrutor
-            ? true
-            : false;
+        return !obj.nm_instrutor ? true : false;
     }
     else {
         return false;

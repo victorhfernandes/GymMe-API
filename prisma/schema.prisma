@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -15,124 +9,206 @@ datasource db {
 
 model Aluno {
   id_aluno         Int       @id @default(autoincrement())
-  nm_aluno         String?   @db.VarChar(100)
-  cpf_aluno        String?   @db.VarChar(14)
-  email_aluno      String    @unique @db.VarChar(50)
-  senha_aluno      String    @db.Char(60)
-  celular_aluno    String?   @db.VarChar(13)
-  nascimento_aluno DateTime?
-  servicos         Servico[]
+  nm_aluno         String?   @db.VarChar(255)
+  celular_aluno    String?   @unique(map: "celular_aluno") @db.VarChar(14)
+  email_aluno      String    @unique(map: "email_aluno") @db.VarChar(255)
+  senha_aluno      String    @db.VarChar(60)
+  nascimento_aluno DateTime? @db.Date
+  foto_perfil      String?   @db.VarChar(255)
+  atestado         String?   @db.VarChar(255)
+  doresPeito       Boolean?
+  desequilibrio    Boolean?
+  osseoArticular   Boolean?
+  medicado         Boolean?
+  cpf_aluno        String?   @unique(map: "cpf_aluno") @db.VarChar(14)
+  updated_at       DateTime  @default(now())
+  created_at       DateTime  @default(now())
+  tb_servico       Servico[]
 
   @@map("tb_aluno")
 }
 
+model Avaliacao {
+  id_avaliacao Int       @id @default(autoincrement())
+  comentario   String?   @db.TinyText
+  dt_avaliacao DateTime? @db.Date
+  id_servico   Int
+  tb_servico   Servico   @relation(fields: [id_servico], references: [id_servico], onDelete: Cascade, onUpdate: NoAction, map: "fk_idServicoAvaliacao")
+
+  @@map("tb_avaliacao")
+}
+
+model Certificacao {
+  id_certificacao          Int                     @id @default(autoincrement())
+  nm_certificacao          String?                 @db.VarChar(50)
+  tb_instrutorcertificacao InstrutorCertificacao[]
+
+  @@map("tb_certificacao")
+}
+
+model Cidade {
+  id_cidade          Int               @id @default(autoincrement())
+  nm_cidade          String?           @db.VarChar(255)
+  nm_estado          String?           @db.VarChar(2)
+  tb_instrutorcidade InstrutorCidade[]
+
+  @@map("tb_cidade")
+}
+
 model Especializacao {
-  id_especializacao Int                       @id @default(autoincrement())
-  nm_especializacao String                    @db.VarChar(100)
-  instrutores       InstrutorEspecializacao[]
+  id_especializacao          Int                       @id @default(autoincrement())
+  nm_especializacao          String?                   @db.VarChar(50)
+  tb_instrutorespecializacao InstrutorEspecializacao[]
 
   @@map("tb_especializacao")
 }
 
-model Qualificacao {
-  id_qualificacao Int                     @id @default(autoincrement())
-  nm_qualificacao String                  @db.VarChar(100)
-  instrutores     InstrutorQualificacao[]
+model Experiencia {
+  id_experiencia          Int                    @id @default(autoincrement())
+  nm_experiencia          String?                @db.VarChar(50)
+  tb_instrutorexperiencia InstrutorExperiencia[]
 
-  @@map("tb_qualificacao")
+  @@map("tb_experiencia")
 }
 
-model Endereco {
-  id_endereco Int                 @id @default(autoincrement())
-  rua         String?             @db.VarChar(80)
-  complemento String?             @db.VarChar(80)
-  bairro      String?             @db.VarChar(80)
-  cidade      String?             @db.VarChar(80)
-  estado      String?             @db.VarChar(80)
-  instrutores InstrutorEndereco[]
+model grupoMuscular {
+  id_grupoMuscular Int      @id @default(autoincrement())
+  nm_grupoMuscular String?  @db.VarChar(20)
+  tb_treino        Treino[]
 
-  @@map("tb_endereco")
+  @@map("tb_grupomuscular")
 }
 
 model Instrutor {
-  id_instrutor         Int                       @id @default(autoincrement())
-  nm_instrutor         String?                   @db.VarChar(100)
-  cpf_instrutor        String?                   @db.VarChar(14)
-  foto_perfil          String?                   @db.VarChar(255)
-  email_instrutor      String                    @unique @db.VarChar(50)
-  senha_instrutor      String                    @db.Char(60)
-  cel_instrutor        String?                   @db.VarChar(13)
-  cref_instrutor       String?                   @db.VarChar(11)
-  avaliacao_instrutor  Decimal?                  @db.Decimal(4, 2)
-  intro_instrutor      String?                   @db.TinyText
-  nascimento_instrutor DateTime?
-  especializacoes      InstrutorEspecializacao[]
-  qualificacoes        InstrutorQualificacao[]
-  enderecos            InstrutorEndereco[]
-  links                Link[]
-  servicos             Servico[]
+  id_instrutor             Int                       @id @default(autoincrement())
+  nm_instrutor             String?                   @db.VarChar(255)
+  email_instrutor          String                    @unique(map: "email_instrutor") @db.VarChar(255)
+  senha_instrutor          String                    @db.VarChar(60)
+  celular_instrutor        String?                   @db.VarChar(13)
+  cref_instrutor           String?                   @db.VarChar(11)
+  intro_instrutor          String?                   @db.TinyText
+  nascimento_instrutor     DateTime?                 @db.Date
+  foto_perfil              String?                   @db.VarChar(255)
+  cpf_instrutor            String?                   @db.VarChar(14)
+  updated_at               DateTime                  @default(now())
+  created_at               DateTime                  @default(now())
+  tb_instrutorcertificacao InstrutorCertificacao[]
+  tb_instrutorcidade       InstrutorCidade[]
+  especializacoes          InstrutorEspecializacao[]
+  tb_instrutorexperiencia  InstrutorExperiencia[]
+  tb_link                  Link[]
+  tb_servico               Servico[]
 
   @@map("tb_instrutor")
+}
+
+model InstrutorCertificacao {
+  id_instrutorCertificacao  Int          @id @default(autoincrement())
+  id_instrutor              Int
+  id_certificacao           Int
+  nm_instituicao            String?      @db.VarChar(50)
+  id_certificadoProfisional String?      @db.VarChar(15)
+  tb_certificacao           Certificacao @relation(fields: [id_certificacao], references: [id_certificacao], onDelete: Cascade, onUpdate: NoAction, map: "fk_certificacaoInstrutor")
+  tb_instrutor              Instrutor    @relation(fields: [id_instrutor], references: [id_instrutor], onDelete: Cascade, onUpdate: NoAction, map: "fk_instutorCertificacao")
+
+  @@unique([id_instrutor, id_certificacao], map: "uc_certificacao")
+  @@map("tb_instrutorcertificacao")
+}
+
+model InstrutorCidade {
+  id_instrutorCidade Int       @id @default(autoincrement())
+  id_instrutor       Int
+  id_cidade          Int
+  tb_cidade          Cidade    @relation(fields: [id_cidade], references: [id_cidade], onDelete: Cascade, onUpdate: NoAction, map: "fk_cidadeInstrutor")
+  tb_instrutor       Instrutor @relation(fields: [id_instrutor], references: [id_instrutor], onDelete: Cascade, onUpdate: NoAction, map: "fk_instutorCidade")
+
+  @@map("tb_instrutorcidade")
 }
 
 model InstrutorEspecializacao {
   id_instrutorEspecializacao Int            @id @default(autoincrement())
   id_instrutor               Int
   id_especializacao          Int
-  instrutor                  Instrutor      @relation(fields: [id_instrutor], references: [id_instrutor])
-  especializacao             Especializacao @relation(fields: [id_especializacao], references: [id_especializacao])
+  especializacao             Especializacao @relation(fields: [id_especializacao], references: [id_especializacao], onDelete: Cascade, onUpdate: NoAction, map: "fk_especializacaoInstrutor")
+  tb_instrutor               Instrutor      @relation(fields: [id_instrutor], references: [id_instrutor], onDelete: Cascade, onUpdate: NoAction, map: "fk_instutorEspecializacao")
 
-  @@map("tb_instrutorEspecializacao")
+  @@unique([id_instrutor, id_especializacao], map: "uc_especializacao")
+  @@map("tb_instrutorespecializacao")
 }
 
-model InstrutorQualificacao {
-  id_instrutorQualificacao Int          @id @default(autoincrement())
-  id_instrutor             Int
-  id_qualificacao          Int
-  instrutor                Instrutor    @relation(fields: [id_instrutor], references: [id_instrutor])
-  qualificacao             Qualificacao @relation(fields: [id_qualificacao], references: [id_qualificacao])
+model InstrutorExperiencia {
+  id_instrutorExperiencia Int         @id @default(autoincrement())
+  id_instrutor            Int
+  id_experiencia          Int
+  ds_experiencia          String?     @db.TinyText
+  tb_experiencia          Experiencia @relation(fields: [id_experiencia], references: [id_experiencia], onDelete: Cascade, onUpdate: NoAction, map: "fk_experienciaInstrutor")
+  tb_instrutor            Instrutor   @relation(fields: [id_instrutor], references: [id_instrutor], onDelete: Cascade, onUpdate: NoAction, map: "fk_instutorExperiencia")
 
-  @@map("tb_instrutorQualificacao")
-}
-
-model InstrutorEndereco {
-  id_instrutorEndereco Int       @id @default(autoincrement())
-  id_instrutor         Int
-  id_endereco          Int
-  instrutor            Instrutor @relation(fields: [id_instrutor], references: [id_instrutor])
-  endereco             Endereco  @relation(fields: [id_endereco], references: [id_endereco])
-
-  @@map("tb_instrutorEndereco")
+  @@unique([id_instrutor, id_experiencia], map: "uc_experiencia")
+  @@map("tb_instrutorexperiencia")
 }
 
 model Link {
   id_link      Int       @id @default(autoincrement())
-  nm_link      String    @db.VarChar(100)
+  nm_link      String    @db.VarChar(50)
   id_instrutor Int
-  instrutor    Instrutor @relation(fields: [id_instrutor], references: [id_instrutor])
+  id_tipo      Int
+  tb_instrutor Instrutor @relation(fields: [id_instrutor], references: [id_instrutor], onDelete: Cascade, onUpdate: NoAction, map: "fk_instrutorLink")
+  tb_tipo      Tipo      @relation(fields: [id_tipo], references: [id_tipo], onDelete: Cascade, onUpdate: NoAction, map: "fk_tipo")
 
   @@map("tb_link")
 }
 
-model Servico {
-  id_servico   Int         @id @default(autoincrement())
-  ds_servico   String?     @db.VarChar(100)
-  id_aluno     Int
-  id_instrutor Int
-  aluno        Aluno       @relation(fields: [id_aluno], references: [id_aluno])
-  instrutor    Instrutor   @relation(fields: [id_instrutor], references: [id_instrutor])
-  avaliacoes   Avaliacao[]
+model Planilha {
+  id_planilha Int      @id @default(autoincrement())
+  nm_planilha String   @db.VarChar(255)
+  id_servico  Int
+  tb_servico  Servico  @relation(fields: [id_servico], references: [id_servico], onDelete: Cascade, onUpdate: NoAction, map: "fk_idServicoPlanilha")
+  tb_treino   Treino[]
 
+  @@map("tb_planilha")
+}
+
+model Servico {
+  id_servico       Int         @id @default(autoincrement())
+  msg_servico      String?     @db.VarChar(255)
+  nota             Decimal?    @db.Decimal(3, 2)
+  id_aluno         Int
+  id_instrutor     Int
+  status_servico   Boolean?
+  status_pagamento Boolean?
+  updated_at       DateTime    @default(now())
+  created_at       DateTime    @default(now())
+  tb_avaliacao     Avaliacao[]
+  tb_planilha      Planilha[]
+  tb_aluno         Aluno       @relation(fields: [id_aluno], references: [id_aluno], onDelete: Cascade, onUpdate: NoAction, map: "fk_alunoServico")
+  tb_instrutor     Instrutor   @relation(fields: [id_instrutor], references: [id_instrutor], onDelete: Cascade, onUpdate: NoAction, map: "fk_instrutorServico")
+
+  @@unique([id_instrutor, id_aluno], map: "uc_servico")
   @@map("tb_servico")
 }
 
-model Avaliacao {
-  id_avaliacao Int      @id @default(autoincrement())
-  nota         Decimal? @db.Decimal(4, 2)
-  comentario   String?  @db.TinyText
-  dt_avaliacao DateTime
-  id_servico   Int
-  servico      Servico  @relation(fields: [id_servico], references: [id_servico])
+model Tipo {
+  id_tipo Int    @id @default(autoincrement())
+  nm_tipo String @db.VarChar(255)
+  tb_link Link[]
 
-  @@map("tb_avaliacao")
+  @@map("tb_tipo")
+}
+
+model Treino {
+  id_treino        Int            @id @default(autoincrement())
+  nm_exercicio     String         @db.VarChar(255)
+  id_grupoMuscular Int?
+  id_planilha      Int?
+  ds_treino        String?        @db.TinyText
+  qt_treino        Int?
+  qt_serie         Int?
+  kg_carga         Float?         @db.Float
+  sg_descanso      Int?
+  gif_exercicio    String?        @db.VarChar(255)
+  tb_grupomuscular grupoMuscular? @relation(fields: [id_grupoMuscular], references: [id_grupoMuscular], onDelete: Cascade, onUpdate: NoAction, map: "fk_idGrupoMuscular")
+  tb_planilha      Planilha?      @relation(fields: [id_planilha], references: [id_planilha], onDelete: Cascade, onUpdate: NoAction, map: "fk_idPlanilha")
+
+  @@map("tb_treino")
 }

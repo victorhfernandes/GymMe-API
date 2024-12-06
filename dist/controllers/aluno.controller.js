@@ -7,6 +7,9 @@ exports.postAluno = postAluno;
 exports.postAlunoCompleto = postAlunoCompleto;
 exports.getAlunoById = getAlunoById;
 exports.getLoginAluno = getLoginAluno;
+exports.postServico = postServico;
+exports.getServicosAlunoByStatus = getServicosAlunoByStatus;
+exports.putServicoStatusPagamento = putServicoStatusPagamento;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const aluno_model_1 = require("../models/aluno.model");
 async function postAluno(request, response) {
@@ -16,19 +19,23 @@ async function postAluno(request, response) {
     return response.status(201).json(resultado);
 }
 async function postAlunoCompleto(request, response) {
-    const { nm_aluno, celular_aluno, nascimento_aluno } = request.body;
-    console.log(nascimento_aluno);
+    let { doresPeito, desequilibrio, osseoArticular, medicado } = request.body;
+    const { nm_aluno, celular_aluno, nascimento_aluno, cpf_aluno, foto_perfil, atestado, } = request.body;
+    doresPeito = doresPeito === "true" ? true : false;
+    desequilibrio = desequilibrio === "true" ? true : false;
+    osseoArticular = osseoArticular === "true" ? true : false;
+    medicado = medicado === "true" ? true : false;
     const dtNascimento = new Date(nascimento_aluno);
     const id = Number(request.params.id);
-    const resultado = await (0, aluno_model_1.createAlunoCompleto)(nm_aluno, celular_aluno, dtNascimento, id);
+    const resultado = await (0, aluno_model_1.createAlunoCompleto)(nm_aluno, celular_aluno, dtNascimento, cpf_aluno, foto_perfil, atestado, doresPeito, desequilibrio, osseoArticular, medicado, id);
     return response.json(resultado);
 }
 async function getAlunoById(request, response) {
     const id_aluno = request.params.id;
     const resultado = await (0, aluno_model_1.findAlunoById)(Number(id_aluno));
-    if (request.query.isCadCompleto) {
-        const isCadCompleto = !areAllValuesNull(resultado);
-        return response.json(isCadCompleto);
+    if (request.query.isCadCompl) {
+        const isCadCompl = !areAllValuesNull(resultado);
+        return response.json(isCadCompl);
     }
     return response.json(resultado);
 }
@@ -50,9 +57,48 @@ async function getLoginAluno(request, response) {
         return response.status(400).json(resultado);
     }
 }
+async function postServico(request, response) {
+    const { isSolicitacao } = request.body;
+    const instrutor = Number(request.params.instrutor);
+    const aluno = Number(request.params.aluno);
+    if (isSolicitacao) {
+        const resultado = await (0, aluno_model_1.createServico)(instrutor, aluno);
+        return response.status(201).json(resultado);
+    }
+    else {
+        return response.status(400).json("Solicitação Invalida!");
+    }
+}
+async function getServicosAlunoByStatus(request, response) {
+    const id = Number(request.params.id);
+    const statusServico = request.params.statusServico === "true"
+        ? true
+        : request.params.statusServico === "false"
+            ? false
+            : null;
+    const statusPagamento = request.params.statusPagamento === "true"
+        ? true
+        : request.params.statusPagamento === "false"
+            ? false
+            : null;
+    const resultado = await (0, aluno_model_1.findServicosAlunoByStatus)(id, statusServico, statusPagamento);
+    return response.json(resultado);
+}
+async function putServicoStatusPagamento(request, response) {
+    const idInstrutor = Number(request.params.idInstrutor);
+    const idAluno = Number(request.params.idAluno);
+    const { statusPagamento } = request.body;
+    const resultado = await (0, aluno_model_1.updateServicoStatusPagamento)(idInstrutor, idAluno, statusPagamento);
+    if (resultado) {
+        return response.json(resultado);
+    }
+    else {
+        return response.status(400).json(resultado);
+    }
+}
 function areAllValuesNull(obj) {
     if (obj) {
-        return Object.values(obj).every((value) => value === null);
+        return !obj.nm_aluno ? true : false;
     }
     else {
         return false;
