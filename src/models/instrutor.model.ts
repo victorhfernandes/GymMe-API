@@ -115,6 +115,7 @@ export async function findInstrutores(id_especializacao: number[]) {
         id_instrutor: true,
         nm_instrutor: true,
         foto_perfil: true,
+        intro_instrutor: true,
         especializacoes: {
           select: {
             especializacao: {
@@ -135,6 +136,7 @@ export async function findInstrutores(id_especializacao: number[]) {
         id_instrutor: true,
         nm_instrutor: true,
         foto_perfil: true,
+        intro_instrutor: true,
         especializacoes: {
           select: {
             especializacao: {
@@ -157,6 +159,7 @@ export async function findInstrutores(id_especializacao: number[]) {
     id: instrutor.id_instrutor,
     nome: instrutor.nm_instrutor,
     foto: instrutor.foto_perfil,
+    introducao: instrutor.intro_instrutor,
     especializacoes: instrutor.especializacoes
       .map((e) => e.especializacao.nm_especializacao)
       .sort()
