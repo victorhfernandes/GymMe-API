@@ -14,5 +14,6 @@ router
     .post("/cadastro", (0, asyncErrorHandler_1.default)(aluno_controller_1.postAluno))
     .patch("/cadastro/:id", (0, asyncErrorHandler_1.default)(aluno_controller_1.postAlunoCompleto))
     .get("/:id", (0, asyncErrorHandler_1.default)(aluno_controller_1.getAlunoById)) //(?isCadCompl=)
-    .post("/login", (0, asyncErrorHandler_1.default)(aluno_controller_1.getLoginAluno));
+    .post("/login", (0, asyncErrorHandler_1.default)(aluno_controller_1.getLoginAluno))
+    .get("/analise/:id", (0, asyncErrorHandler_1.default)(aluno_controller_1.getAnaliseAluno));
 exports.default = router;

@@ -65,6 +65,26 @@ export async function findAlunoById(id_aluno: number) {
   return resultado;
 }
 
+export async function findAnaliseAluno(id: number) {
+  const resultado = await prisma.aluno.findUnique({
+    where: {
+      id_aluno: id,
+    },
+    select: {
+      nm_aluno: true,
+      foto_perfil: true,
+      atestado: true,
+      nascimento_aluno: true,
+      doresPeito: true,
+      desequilibrio: true,
+      osseoArticular: true,
+      medicado: true,
+    },
+  });
+
+  return resultado;
+}
+
 export async function findLoginAluno(email_aluno: string) {
   const resultado = await prisma.aluno.findUnique({
     where: {

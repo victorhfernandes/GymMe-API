@@ -60,29 +60,53 @@ export async function createInstrutorCompleto(
       cpf_instrutor: cpf_instrutor,
     },
   });
+
+  await prisma.instrutorEspecializacao.deleteMany({
+    where: {
+      id_instrutor: id,
+    },
+  });
   especializacoes.map(async (item: Select) => {
-    const resultado = await prisma.instrutorEspecializacao.create({
+    await prisma.instrutorEspecializacao.create({
       data: {
         id_instrutor: id,
         id_especializacao: item.value,
       },
     });
   });
+
+  await prisma.instrutorCertificacao.deleteMany({
+    where: {
+      id_instrutor: id,
+    },
+  });
   certificacoes.map(async (item: Select) => {
-    const resultado = await prisma.instrutorCertificacao.create({
+    await prisma.instrutorCertificacao.create({
       data: {
         id_instrutor: id,
         id_certificacao: item.value,
       },
     });
   });
+
+  await prisma.instrutorExperiencia.deleteMany({
+    where: {
+      id_instrutor: id,
+    },
+  });
   experiencias.map(async (item: Select) => {
-    const resultado = await prisma.instrutorExperiencia.create({
+    await prisma.instrutorExperiencia.create({
       data: {
         id_instrutor: id,
         id_experiencia: item.value,
       },
     });
+  });
+
+  await prisma.instrutorCidade.deleteMany({
+    where: {
+      id_instrutor: id,
+    },
   });
   cidades.map(async (item: Select) => {
     const resultado = await prisma.instrutorCidade.create({
@@ -274,6 +298,122 @@ export async function findInstrutorByIdCompleto(id_instrutor: number) {
   return {
     id_instrutor: instructorDetails.id_instrutor,
     created_at: instructorDetails.created_at,
+    intro_instrutor: instructorDetails.intro_instrutor,
+    nm_instrutor: instructorDetails.nm_instrutor,
+    email_instrutor: instructorDetails.email_instrutor,
+    celular_instrutor: instructorDetails.celular_instrutor,
+    cref_instrutor: instructorDetails.cref_instrutor,
+    cpf_instrutor: instructorDetails.cpf_instrutor,
+    foto_perfil: instructorDetails.foto_perfil,
+    notaMedia: notaMedia._avg.nota,
+    especializacoes,
+    certificacoes,
+    experiencias,
+    links,
+    cidades,
+  };
+}
+
+export async function findInstrutorByIdCompletoForm(id_instrutor: number) {
+  const instructorDetails = await prisma.instrutor.findUnique({
+    where: {
+      id_instrutor: id_instrutor,
+    },
+    include: {
+      tb_instrutorcertificacao: {
+        include: {
+          tb_certificacao: true,
+        },
+      },
+      tb_instrutorexperiencia: {
+        include: {
+          tb_experiencia: true,
+        },
+      },
+      especializacoes: {
+        include: {
+          especializacao: true,
+        },
+      },
+      tb_link: {
+        include: {
+          tb_tipo: true,
+        },
+      },
+      tb_instrutorcidade: {
+        include: {
+          tb_cidade: true,
+        },
+      },
+    },
+  });
+
+  if (!instructorDetails) {
+    throw new Error("Instrutor não encontrado!");
+  }
+
+  const especializacoes = [
+    ...new Set(
+      instructorDetails.especializacoes.map((especializacao) => {
+        return {
+          value: especializacao.especializacao.id_especializacao,
+          label: especializacao.especializacao.nm_especializacao,
+        };
+      })
+    ),
+  ];
+  const certificacoes = [
+    ...new Set(
+      instructorDetails.tb_instrutorcertificacao.map((certificacao) => {
+        return {
+          value: certificacao.tb_certificacao.id_certificacao,
+          label: certificacao.tb_certificacao.nm_certificacao,
+        };
+      })
+    ),
+  ];
+  const experiencias = [
+    ...new Set(
+      instructorDetails.tb_instrutorexperiencia.map((experiencia) => {
+        return {
+          value: experiencia.tb_experiencia.id_experiencia,
+          label: experiencia.tb_experiencia.nm_experiencia,
+        };
+      })
+    ),
+  ];
+  const cidades = [
+    ...new Set(
+      instructorDetails.tb_instrutorcidade.map((cidade) => {
+        return {
+          value: cidade.tb_cidade.id_cidade,
+          label: cidade.tb_cidade.nm_cidade,
+        };
+      })
+    ),
+  ];
+
+  const links = [
+    ...new Set(
+      instructorDetails.tb_link.map(
+        (link) => `${link.tb_tipo.nm_tipo}, ${link.nm_link}`
+      )
+    ),
+  ];
+
+  const notaMedia = await prisma.servico.aggregate({
+    _avg: {
+      nota: true,
+    },
+    where: {
+      id_instrutor: id_instrutor,
+    },
+  });
+
+  return {
+    id_instrutor: instructorDetails.id_instrutor,
+    created_at: instructorDetails.created_at,
+    nascimento_instrutor: instructorDetails.nascimento_instrutor,
     intro_instrutor: instructorDetails.intro_instrutor,
     nm_instrutor: instructorDetails.nm_instrutor,
     email_instrutor: instructorDetails.email_instrutor,

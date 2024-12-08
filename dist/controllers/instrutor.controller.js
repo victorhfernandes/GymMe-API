@@ -31,24 +31,6 @@ async function postInstrutor(request, response) {
 }
 async function postInstrutorCompleto(request, response) {
     const { nm_instrutor, celular_instrutor, nascimento_instrutor, foto_perfil, cpf_instrutor, especializacoes, certificacoes, experiencias, cidades, } = request.body;
-    /*
-    const Iespecializacoes = especializacoes.map((item: Select) => ({
-      id_especializacao: item.value,
-      nm_especializacao: item.label,
-    }));
-    const Icertificacoes = certificacoes.map((item: Select) => ({
-      id_certificacao: item.value,
-      nm_certificacao: item.label,
-    }));
-    const Iexperiencias = experiencias.map((item: Select) => ({
-      id_experiencia: item.value,
-      nm_experiencia: item.label,
-    }));
-    const Icidades = cidades.map((item: Select) => ({
-      id_cidade: item.value,
-      nm_cidade: item.label,
-    }));
-    */
     const dtNascimento = new Date(nascimento_instrutor);
     const id = Number(request.params.id);
     const resultado = await (0, instrutor_model_1.createInstrutorCompleto)(nm_instrutor, celular_instrutor, dtNascimento, especializacoes, certificacoes, experiencias, cidades, foto_perfil, cpf_instrutor, id);
@@ -68,7 +50,9 @@ async function getInstrutorById(request, response) {
     const compl = request.query.compl;
     const resultado = !compl
         ? await (0, instrutor_model_1.findInstrutorById)(Number(id_instrutor))
-        : await (0, instrutor_model_1.findInstrutorByIdCompleto)(Number(id_instrutor));
+        : compl === "true"
+            ? await (0, instrutor_model_1.findInstrutorByIdCompleto)(Number(id_instrutor))
+            : await (0, instrutor_model_1.findInstrutorByIdCompletoForm)(Number(id_instrutor));
     if (request.query.isCadCompl) {
         const isCadCompl = !areAllValuesNull(resultado);
         return response.json(isCadCompl);

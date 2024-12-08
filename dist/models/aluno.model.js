@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.createAluno = createAluno;
 exports.createAlunoCompleto = createAlunoCompleto;
 exports.findAlunoById = findAlunoById;
+exports.findAnaliseAluno = findAnaliseAluno;
 exports.findLoginAluno = findLoginAluno;
 exports.createServico = createServico;
 exports.findServicosAlunoByStatus = findServicosAlunoByStatus;
@@ -49,6 +50,24 @@ async function findAlunoById(id_aluno) {
             cpf_aluno: true,
             foto_perfil: true,
             atestado: true,
+            doresPeito: true,
+            desequilibrio: true,
+            osseoArticular: true,
+            medicado: true,
+        },
+    });
+    return resultado;
+}
+async function findAnaliseAluno(id) {
+    const resultado = await prisma_util_1.prisma.aluno.findUnique({
+        where: {
+            id_aluno: id,
+        },
+        select: {
+            nm_aluno: true,
+            foto_perfil: true,
+            atestado: true,
+            nascimento_aluno: true,
             doresPeito: true,
             desequilibrio: true,
             osseoArticular: true,

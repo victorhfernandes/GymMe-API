@@ -1,10 +1,12 @@
 import { Router } from "express";
+import passport from "passport";
 import {
   postAluno,
   postAlunoCompleto,
   getLoginAluno,
   getAlunoById,
   postServico,
+  getAnaliseAluno,
   getServicosAlunoByStatus,
   putServicoStatusPagamento,
 } from "../controllers/aluno.controller";
@@ -25,6 +27,7 @@ router
   .post("/cadastro", asyncHandler(postAluno))
   .patch("/cadastro/:id", asyncHandler(postAlunoCompleto))
   .get("/:id", asyncHandler(getAlunoById)) //(?isCadCompl=)
-  .post("/login", asyncHandler(getLoginAluno));
+  .post("/login", asyncHandler(getLoginAluno))
+  .get("/analise/:id", asyncHandler(getAnaliseAluno));
 
 export default router;

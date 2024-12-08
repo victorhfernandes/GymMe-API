@@ -1,4 +1,10 @@
 import express from "express";
+// import cookieParser from "cookie-parser";
+// import session from "express-session";
+// import passport from "passport";
+// import { PrismaSessionStore } from "@quixo3/prisma-session-store";
+// import { PrismaClient } from "@prisma/client";
+// import { prisma } from "./utils/prisma.util";
 import cors from "cors";
 import dotenv from "dotenv";
 import routes from "./routes/index.router";
@@ -8,10 +14,26 @@ import globalErrorHandler from "./middlewares/globalErrorHandler";
 dotenv.config({ path: "./.env" });
 
 const app = express();
-const PORT = process.env.PORT || 3000;
-
 app.use(express.json());
+// app.use(cookieParser());
+// app.use(
+//   session({
+//     secret: "anson the dev",
+//     saveUninitialized: true,
+//     resave: false,
+//     cookie: {
+//       maxAge: 60000 * 60,
+//     },
+//     store: new PrismaSessionStore(prisma, {
+//       checkPeriod: 2 * 60 * 1000, //ms
+//       dbRecordIdIsSessionId: true,
+//       dbRecordIdFunction: undefined,
+//     }),
+//   })
+// );
 
+// app.use(passport.initialize());
+// app.use(passport.session());
 app.use(
   cors({
     origin: "*",
@@ -22,6 +44,7 @@ app.use("/api", routes);
 app.use("/", invalidRouteHandler);
 app.use(globalErrorHandler);
 
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
 });

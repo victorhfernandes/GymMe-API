@@ -6,6 +6,7 @@ import {
   findInstrutores,
   findInstrutorById,
   findInstrutorByIdCompleto,
+  findInstrutorByIdCompletoForm,
   findLoginInstrutor,
   findEspecializacoes,
   findInstrutorByEmail,
@@ -50,6 +51,36 @@ type InstrutorForms =
       links: (string | null)[];
       cidades: (string | null)[];
     }
+  | {
+      id_instrutor: number | null;
+      created_at: Date | null;
+      intro_instrutor: string | null;
+      nm_instrutor: string | null;
+      nascimento_instrutor: Date | null;
+      email_instrutor: string | null;
+      celular_instrutor: string | null;
+      cref_instrutor: string | null;
+      cpf_instrutor: string | null;
+      foto_perfil: string | null;
+      notaMedia: Decimal | null;
+      especializacoes: Array<{
+        value: number;
+        label: string | null;
+      }> | null;
+      certificacoes: Array<{
+        value: number;
+        label: string | null;
+      }> | null;
+      experiencias: Array<{
+        value: number;
+        label: string | null;
+      }> | null;
+      links: string[] | null;
+      cidades: Array<{
+        value: number;
+        label: string | null;
+      }> | null;
+    }
   | null;
 
 type Select = {
@@ -80,24 +111,6 @@ export async function postInstrutorCompleto(
     cidades,
   } = request.body;
 
-  /*
-  const Iespecializacoes = especializacoes.map((item: Select) => ({
-    id_especializacao: item.value,
-    nm_especializacao: item.label,
-  }));
-  const Icertificacoes = certificacoes.map((item: Select) => ({
-    id_certificacao: item.value,
-    nm_certificacao: item.label,
-  }));
-  const Iexperiencias = experiencias.map((item: Select) => ({
-    id_experiencia: item.value,
-    nm_experiencia: item.label,
-  }));
-  const Icidades = cidades.map((item: Select) => ({
-    id_cidade: item.value,
-    nm_cidade: item.label,
-  }));
-  */
   const dtNascimento = new Date(nascimento_instrutor);
   const id = Number(request.params.id);
   const resultado = await createInstrutorCompleto(
@@ -134,7 +147,9 @@ export async function getInstrutorById(request: Request, response: Response) {
   const compl = request.query.compl;
   const resultado = !compl
     ? await findInstrutorById(Number(id_instrutor))
-    : await findInstrutorByIdCompleto(Number(id_instrutor));
+    : compl === "true"
+    ? await findInstrutorByIdCompleto(Number(id_instrutor))
+    : await findInstrutorByIdCompletoForm(Number(id_instrutor));
   if (request.query.isCadCompl) {
     const isCadCompl = !areAllValuesNull(resultado);
     return response.json(isCadCompl);

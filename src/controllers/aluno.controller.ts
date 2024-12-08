@@ -5,6 +5,7 @@ import {
   createAlunoCompleto,
   findLoginAluno,
   findAlunoById,
+  findAnaliseAluno,
   findServicosAlunoByStatus,
   createServico,
   updateServicoStatusPagamento,
@@ -64,6 +65,12 @@ export async function getAlunoById(request: Request, response: Response) {
     const isCadCompl = !areAllValuesNull(resultado);
     return response.json(isCadCompl);
   }
+  return response.json(resultado);
+}
+
+export async function getAnaliseAluno(request: Request, response: Response) {
+  const id_aluno = request.params.id;
+  const resultado = await findAnaliseAluno(Number(id_aluno));
   return response.json(resultado);
 }
 

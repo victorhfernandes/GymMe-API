@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.postAluno = postAluno;
 exports.postAlunoCompleto = postAlunoCompleto;
 exports.getAlunoById = getAlunoById;
+exports.getAnaliseAluno = getAnaliseAluno;
 exports.getLoginAluno = getLoginAluno;
 exports.postServico = postServico;
 exports.getServicosAlunoByStatus = getServicosAlunoByStatus;
@@ -37,6 +38,11 @@ async function getAlunoById(request, response) {
         const isCadCompl = !areAllValuesNull(resultado);
         return response.json(isCadCompl);
     }
+    return response.json(resultado);
+}
+async function getAnaliseAluno(request, response) {
+    const id_aluno = request.params.id;
+    const resultado = await (0, aluno_model_1.findAnaliseAluno)(Number(id_aluno));
     return response.json(resultado);
 }
 async function getLoginAluno(request, response) {
