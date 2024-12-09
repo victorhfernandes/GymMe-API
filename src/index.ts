@@ -25,6 +25,9 @@ app.use(
     saveUninitialized: true,
     resave: false,
     cookie: {
+      secure: true,
+      httpOnly: true,
+      sameSite: "none",
       maxAge: 60000 * 60,
     },
     store: new PrismaSessionStore(prisma, {

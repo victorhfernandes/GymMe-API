@@ -27,6 +27,9 @@ app.use((0, express_session_1.default)({
     saveUninitialized: true,
     resave: false,
     cookie: {
+        secure: true,
+        httpOnly: true,
+        sameSite: "none",
         maxAge: 60000 * 60,
     },
     store: new prisma_session_store_1.PrismaSessionStore(prisma_util_1.prisma, {
