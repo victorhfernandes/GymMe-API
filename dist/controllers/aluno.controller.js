@@ -5,9 +5,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.postAluno = postAluno;
 exports.postAlunoCompleto = postAlunoCompleto;
+exports.postLoginAluno = postLoginAluno;
+exports.postLogOutAluno = postLogOutAluno;
+exports.getAlunoId = getAlunoId;
 exports.getAlunoById = getAlunoById;
 exports.getAnaliseAluno = getAnaliseAluno;
-exports.getLoginAluno = getLoginAluno;
 exports.postServico = postServico;
 exports.getServicosAlunoByStatus = getServicosAlunoByStatus;
 exports.putServicoStatusPagamento = putServicoStatusPagamento;
@@ -31,6 +33,23 @@ async function postAlunoCompleto(request, response) {
     const resultado = await (0, aluno_model_1.createAlunoCompleto)(nm_aluno, celular_aluno, dtNascimento, cpf_aluno, foto_perfil, atestado, doresPeito, desequilibrio, osseoArticular, medicado, id);
     return response.json(resultado);
 }
+async function postLoginAluno(request, response) {
+    response.sendStatus(200);
+}
+async function postLogOutAluno(request, response) {
+    if (!request.user)
+        return response.sendStatus(401);
+    request.logout((err) => {
+        if (err)
+            return response.sendStatus(400);
+        response.sendStatus(200);
+    });
+}
+async function getAlunoId(request, response) {
+    return request.user
+        ? response.status(200).json(request.user)
+        : response.sendStatus(401).json();
+}
 async function getAlunoById(request, response) {
     const id_aluno = request.params.id;
     const resultado = await (0, aluno_model_1.findAlunoById)(Number(id_aluno));
@@ -44,24 +63,6 @@ async function getAnaliseAluno(request, response) {
     const id_aluno = request.params.id;
     const resultado = await (0, aluno_model_1.findAnaliseAluno)(Number(id_aluno));
     return response.json(resultado);
-}
-async function getLoginAluno(request, response) {
-    const { email_aluno, senha_aluno } = request.body;
-    const resultado = await (0, aluno_model_1.findLoginAluno)(email_aluno);
-    if (resultado) {
-        const isValid = await bcrypt_1.default.compare(senha_aluno, resultado.senha_aluno);
-        if (isValid) {
-            return response.json({
-                id_aluno: resultado.id_aluno,
-            });
-        }
-        else {
-            return response.status(400).json(null);
-        }
-    }
-    else {
-        return response.status(400).json(resultado);
-    }
 }
 async function postServico(request, response) {
     const { isSolicitacao } = request.body;

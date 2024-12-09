@@ -58,6 +58,24 @@ export async function postAlunoCompleto(request: Request, response: Response) {
   return response.json(resultado);
 }
 
+export async function postLoginAluno(request: Request, response: Response) {
+  response.sendStatus(200);
+}
+
+export async function postLogOutAluno(request: Request, response: Response) {
+  if (!request.user) return response.sendStatus(401);
+  request.logout((err) => {
+    if (err) return response.sendStatus(400);
+    response.sendStatus(200);
+  });
+}
+
+export async function getAlunoId(request: Request, response: Response) {
+  return request.user
+    ? response.status(200).json(request.user)
+    : response.sendStatus(401).json();
+}
+
 export async function getAlunoById(request: Request, response: Response) {
   const id_aluno = request.params.id;
   const resultado = await findAlunoById(Number(id_aluno));
@@ -72,23 +90,6 @@ export async function getAnaliseAluno(request: Request, response: Response) {
   const id_aluno = request.params.id;
   const resultado = await findAnaliseAluno(Number(id_aluno));
   return response.json(resultado);
-}
-
-export async function getLoginAluno(request: Request, response: Response) {
-  const { email_aluno, senha_aluno } = request.body;
-  const resultado = await findLoginAluno(email_aluno);
-  if (resultado) {
-    const isValid = await bcrypt.compare(senha_aluno, resultado.senha_aluno);
-    if (isValid) {
-      return response.json({
-        id_aluno: resultado.id_aluno,
-      });
-    } else {
-      return response.status(400).json(null);
-    }
-  } else {
-    return response.status(400).json(resultado);
-  }
 }
 
 export async function postServico(request: Request, response: Response) {

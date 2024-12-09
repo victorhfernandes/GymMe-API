@@ -1,7 +1,11 @@
 import { Router } from "express";
+import passport from "passport";
 import {
   postInstrutor,
   postInstrutorCompleto,
+  postLoginInstrutor,
+  postLogOutInstrutor,
+  getInstrutorId,
   getInstrutores,
   getInstrutorById,
   getLoginInstrutor,
@@ -24,6 +28,9 @@ import asyncHandler from "../middlewares/asyncErrorHandler";
 const router = Router();
 
 router
+  .get("/login/status", asyncHandler(getInstrutorId))
+  .post("/login", passport.authenticate("instrutor-local"), postLoginInstrutor)
+  .post("/logout", postLogOutInstrutor)
   .patch("/servico/:idInstrutor&:idAluno", asyncHandler(putServicoStatus))
   .get("/planilha/:idInstrutor&:idAluno", asyncHandler(getPlanilhas))
   .post("/planilha", asyncHandler(postPlanilha))

@@ -5,6 +5,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.postInstrutor = postInstrutor;
 exports.postInstrutorCompleto = postInstrutorCompleto;
+exports.postLoginInstrutor = postLoginInstrutor;
+exports.postLogOutInstrutor = postLogOutInstrutor;
+exports.getInstrutorId = getInstrutorId;
 exports.getInstrutores = getInstrutores;
 exports.getInstrutorById = getInstrutorById;
 exports.getLoginInstrutor = getLoginInstrutor;
@@ -35,6 +38,23 @@ async function postInstrutorCompleto(request, response) {
     const id = Number(request.params.id);
     const resultado = await (0, instrutor_model_1.createInstrutorCompleto)(nm_instrutor, celular_instrutor, dtNascimento, especializacoes, certificacoes, experiencias, cidades, foto_perfil, cpf_instrutor, id);
     return response.json(resultado);
+}
+async function postLoginInstrutor(request, response) {
+    response.sendStatus(200);
+}
+async function postLogOutInstrutor(request, response) {
+    if (!request.user)
+        return response.sendStatus(401);
+    request.logout((err) => {
+        if (err)
+            return response.sendStatus(400);
+        response.sendStatus(200);
+    });
+}
+async function getInstrutorId(request, response) {
+    return request.user
+        ? response.status(200).json(request.user)
+        : response.sendStatus(401).json();
 }
 /*Faz pesquisa de instrutores por Id de Especialização caso seja definido na url (?esp=),
 caso não retorna todos os instrutores*/

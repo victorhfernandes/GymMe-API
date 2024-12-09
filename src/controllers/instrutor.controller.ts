@@ -128,6 +128,27 @@ export async function postInstrutorCompleto(
   return response.json(resultado);
 }
 
+export async function postLoginInstrutor(request: Request, response: Response) {
+  response.sendStatus(200);
+}
+
+export async function postLogOutInstrutor(
+  request: Request,
+  response: Response
+) {
+  if (!request.user) return response.sendStatus(401);
+  request.logout((err) => {
+    if (err) return response.sendStatus(400);
+    response.sendStatus(200);
+  });
+}
+
+export async function getInstrutorId(request: Request, response: Response) {
+  return request.user
+    ? response.status(200).json(request.user)
+    : response.sendStatus(401).json();
+}
+
 /*Faz pesquisa de instrutores por Id de Especialização caso seja definido na url (?esp=),
 caso não retorna todos os instrutores*/
 export async function getInstrutores(

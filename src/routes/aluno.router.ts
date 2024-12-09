@@ -3,7 +3,9 @@ import passport from "passport";
 import {
   postAluno,
   postAlunoCompleto,
-  getLoginAluno,
+  postLoginAluno,
+  postLogOutAluno,
+  getAlunoId,
   getAlunoById,
   postServico,
   getAnaliseAluno,
@@ -15,6 +17,9 @@ import asyncHandler from "../middlewares/asyncErrorHandler";
 const router = Router();
 
 router
+  .get("/login/status", asyncHandler(getAlunoId))
+  .post("/login", passport.authenticate("aluno-local"), postLoginAluno)
+  .post("/logout", postLogOutAluno)
   .post("/servico/:instrutor&:aluno", asyncHandler(postServico))
   .get(
     "/servico/:id&:statusServico&:statusPagamento",
@@ -27,7 +32,6 @@ router
   .post("/cadastro", asyncHandler(postAluno))
   .patch("/cadastro/:id", asyncHandler(postAlunoCompleto))
   .get("/:id", asyncHandler(getAlunoById)) //(?isCadCompl=)
-  .post("/login", asyncHandler(getLoginAluno))
   .get("/analise/:id", asyncHandler(getAnaliseAluno));
 
 export default router;
