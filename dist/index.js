@@ -28,7 +28,6 @@ app.use((0, express_session_1.default)({
     resave: false,
     cookie: {
         secure: true,
-        httpOnly: true,
         sameSite: "none",
         maxAge: 60000 * 60,
     },
